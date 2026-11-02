@@ -4,12 +4,19 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Gerador local de contingência para fatura
+  function generateLocalInvoice() {
+    const year = new Date().getFullYear();
+    const num = Math.floor(1000 + Math.random() * 9000);
+    return `FAT-${year}-${num}`;
+  }
+
   // Configurações do Pedido Atual
   const urlParams = new URLSearchParams(window.location.search);
   const checkoutConfig = {
     amount: parseFloat(urlParams.get('amount')) || 100,
     currency: urlParams.get('currency') || 'MZN',
-    reference: urlParams.get('ref') || `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
+    reference: urlParams.get('ref') || urlParams.get('fat') || null,
     description: urlParams.get('desc') || 'Cobrança',
     productId: urlParams.get('product') || null
   };
@@ -94,6 +101,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (e) {
         console.warn('Erro ao carregar dados do infoproduto:', e);
+      }
+    }
+
+    // Se não veio referência na URL, gera automaticamente o número da fatura
+    if (!checkoutConfig.reference) {
+      try {
+        const invRes = await fetch('/api/invoices/next');
+        if (invRes.ok) {
+          const invData = await invRes.json();
+          checkoutConfig.reference = invData.invoiceNumber;
+        }
+      } catch (e) {}
+      if (!checkoutConfig.reference) {
+        checkoutConfig.reference = generateLocalInvoice();
       }
     }
 
@@ -420,9 +441,17 @@ document.addEventListener('DOMContentLoaded', () => {
     window.print();
   });
 
-  btnNewPayment.addEventListener('click', () => {
-    // Gera nova referência para novo pagamento
-    checkoutConfig.reference = `ORD-${Math.floor(1000 + Math.random() * 9000)}`;
+  btnNewPayment.addEventListener('click', async () => {
+    // Gera novo número de fatura automaticamente para novo pagamento
+    try {
+      const res = await fetch('/api/invoices/next');
+      if (res.ok) {
+        const d = await res.json();
+        checkoutConfig.reference = d.invoiceNumber;
+      }
+    } catch (e) {
+      checkoutConfig.reference = generateLocalInvoice();
+    }
     displayReference.textContent = checkoutConfig.reference;
     phoneInput.value = '';
     goToStep('form');

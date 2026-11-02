@@ -503,6 +503,37 @@ async function handleSimulatedPayment(cleanPhone, amount, currency, paymentRefer
 }
 
 /**
+ * Gerador Automático de Número de Fatura Sequencial / Único
+ * Padrão: FAT-YYYY-NNNN (Ex: FAT-2026-0001)
+ */
+async function generateInvoiceNumber() {
+  const year = new Date().getFullYear();
+  let count = 0;
+  try {
+    if (isDbConnected()) {
+      count = await Payment.countDocuments();
+    } else {
+      count = (await getStoredPayments()).length;
+    }
+  } catch (err) {
+    count = Math.floor(Math.random() * 100);
+  }
+  const seq = String(count + 1).padStart(4, '0');
+  return `FAT-${year}-${seq}`;
+}
+
+// Rota para o frontend obter o próximo número de fatura gerado automaticamente
+app.get('/api/invoices/next', async (req, res) => {
+  try {
+    const invoiceNumber = await generateInvoiceNumber();
+    res.json({ invoiceNumber });
+  } catch (e) {
+    const fallback = `FAT-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    res.json({ invoiceNumber: fallback });
+  }
+});
+
+/**
  * POST /api/payments/c2b
  */
 app.post('/api/payments/c2b', async (req, res) => {
@@ -534,7 +565,9 @@ app.post('/api/payments/c2b', async (req, res) => {
 
     const prefix = cleanPhone.slice(0, 2);
     const operator = (prefix === '84' || prefix === '85') ? 'mpesa' : 'emola';
-    const paymentReference = reference || `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    
+    // Geração automática do número da fatura se não for fornecido
+    const paymentReference = reference && reference.trim() ? reference.trim() : await generateInvoiceNumber();
 
     // Se estiver em modo simulador ou forçado
     if (forceSimulator || currentPaymentMode === 'simulator') {

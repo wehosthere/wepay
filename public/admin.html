@@ -752,7 +752,7 @@
           <table class="admin-table">
             <thead>
               <tr>
-                <th>Referência / ID</th>
+                <th>Nº Fatura / ID</th>
                 <th>Telemóvel</th>
                 <th>Montante</th>
                 <th>Estado</th>
@@ -819,8 +819,24 @@
         </div>
 
         <div class="field-group">
-          <label class="field-label">Descrição / Referência</label>
-          <input type="text" id="adminDesc" class="phone-input" style="padding-left: 16px; padding-right: 16px;" placeholder="Ex: Fatura #102">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="field-label" style="margin-bottom: 0;">Número da Fatura (Gerado Automaticamente)</label>
+            <button type="button" id="btnGenNewInvoice" style="background: none; border: none; font-size: 0.725rem; font-weight: 600; color: #4b5563; cursor: pointer; display: flex; align-items: center; gap: 4px;" title="Gerar outro número de fatura">
+              <i data-lucide="refresh-cw" style="width: 12px; height: 12px;"></i>
+              <span>Gerar Novo</span>
+            </button>
+          </div>
+          <div style="position: relative; display: flex; align-items: center;">
+            <input type="text" id="adminInvoiceRef" class="phone-input" style="padding-left: 14px; padding-right: 75px; font-family: monospace; font-weight: 700; letter-spacing: 0.02em;" placeholder="FAT-2026-0001" required>
+            <span style="position: absolute; right: 12px; font-size: 0.725rem; color: #16a34a; font-weight: 700; display: flex; align-items: center; gap: 3px; background: #f0fdf4; padding: 2px 6px; border-radius: 4px; border: 1px solid #bbf7d0;">
+              <i data-lucide="sparkles" style="width: 11px; height: 11px;"></i> Auto
+            </span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Descrição do Pedido (Opcional)</label>
+          <input type="text" id="adminDesc" class="phone-input" style="padding-left: 16px; padding-right: 16px;" placeholder="Ex: Fatura #102 ou Venda de E-book">
         </div>
 
         <div style="margin: 18px 0; padding: 12px; background: #fbfbfc; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem;">
@@ -1319,19 +1335,44 @@
       });
     });
 
-    // Modal de Cobrança
+    // Modal de Cobrança com Geração Automática de Fatura
     const chargeModal = document.getElementById('chargeModal');
-    document.getElementById('btnOpenNewCharge').addEventListener('click', () => {
+    const adminInvoiceRefInput = document.getElementById('adminInvoiceRef');
+
+    async function loadNextInvoiceForAdmin() {
+      try {
+        const res = await fetch('/api/invoices/next');
+        if (res.ok) {
+          const data = await res.json();
+          adminInvoiceRefInput.value = data.invoiceNumber;
+          return;
+        }
+      } catch (e) {}
+      const year = new Date().getFullYear();
+      adminInvoiceRefInput.value = `FAT-${year}-${Math.floor(1000 + Math.random() * 9000)}`;
+    }
+
+    document.getElementById('btnOpenNewCharge').addEventListener('click', async () => {
       chargeModal.classList.add('active');
+      await loadNextInvoiceForAdmin();
       adminPhoneInput.focus();
+      if (window.lucide) lucide.createIcons();
     });
+
+    document.getElementById('btnGenNewInvoice').addEventListener('click', async () => {
+      await loadNextInvoiceForAdmin();
+      showToast('Novo número de fatura gerado!', 'info');
+      if (window.lucide) lucide.createIcons();
+    });
+
     document.getElementById('btnCloseModal').addEventListener('click', () => chargeModal.classList.remove('active'));
 
     document.getElementById('adminChargeForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const phone = adminPhoneInput.value.replace(/\D/g, '');
       const amount = parseFloat(document.getElementById('adminAmount').value);
-      const desc = document.getElementById('adminDesc').value.trim() || 'Fatura Manual';
+      const reference = adminInvoiceRefInput.value.trim();
+      const desc = document.getElementById('adminDesc').value.trim() || 'Cobrança WePay';
       const forceSimulator = document.getElementById('checkForceSimulate').checked;
 
       if (!phone || phone.length !== 9) {
@@ -1352,7 +1393,7 @@
         const res = await fetch('/api/payments/c2b', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone, amount, description: desc, forceSimulator })
+          body: JSON.stringify({ phone, amount, reference, description: desc, forceSimulator })
         });
         const data = await res.json();
 
