@@ -2,7 +2,11 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>WePay | Painel Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -505,6 +509,23 @@
       color: #dc2626;
     }
 
+    .modal-handle-bar {
+      display: none;
+    }
+
+    .table-scroll-hint {
+      display: none;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      font-size: 0.725rem;
+      font-weight: 600;
+      color: #9ca3af;
+      padding: 8px 16px;
+      background: #fafbfc;
+      border-bottom: 1px solid var(--border);
+    }
+
     /* Modais com suporte a rolagem em telas pequenas */
     .modal-overlay {
       position: fixed;
@@ -793,6 +814,37 @@
       .admin-table {
         min-width: 580px;
       }
+      .admin-table th, .admin-table td {
+        padding: 12px 14px;
+      }
+      .table-scroll-hint {
+        display: flex;
+      }
+      .modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+      }
+      .modal-card {
+        border-radius: 20px 20px 0 0;
+        padding: 16px 18px 24px;
+        max-height: 88vh;
+        width: 100%;
+        margin-bottom: 0;
+        box-shadow: 0 -10px 30px rgba(0,0,0,0.12);
+        animation: sheetUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .modal-handle-bar {
+        display: block;
+        width: 38px;
+        height: 4.5px;
+        background: #d1d5db;
+        border-radius: 99px;
+        margin: 0 auto 16px auto;
+      }
+      @keyframes sheetUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+      }
       .table-filters {
         overflow-x: auto;
         white-space: nowrap;
@@ -993,6 +1045,11 @@
           </div>
         </div>
 
+        <div class="table-scroll-hint">
+          <i data-lucide="chevrons-left-right" style="width: 13px; height: 13px;"></i>
+          <span>Deslize para ver mais colunas</span>
+        </div>
+
         <div style="overflow-x: auto;">
           <table class="admin-table">
             <thead>
@@ -1043,6 +1100,7 @@
   <!-- MODAL 1: Nova Cobrança Manual -->
   <div class="modal-overlay" id="chargeModal">
     <div class="modal-card">
+      <div class="modal-handle-bar"></div>
       <h2 class="modal-title">Disparar Cobrança C2B</h2>
       <p class="modal-sub">O cliente receberá uma solicitação no telemóvel para introduzir o PIN.</p>
 
@@ -1105,6 +1163,7 @@
   <!-- MODAL 2: Cadastrar Infoproduto -->
   <div class="modal-overlay" id="productModal">
     <div class="modal-card">
+      <div class="modal-handle-bar"></div>
       <h2 class="modal-title">Novo Infoproduto</h2>
       <p class="modal-sub">Defina o preço e o link para entrega automática após o pagamento.</p>
 
