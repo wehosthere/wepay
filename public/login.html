@@ -98,6 +98,39 @@
       font-size: 0.75rem;
       color: #111827;
     }
+
+    /* Alternador Entrar vs Criar Conta */
+    .auth-toggle-bar {
+      display: flex;
+      background: #f3f4f6;
+      border-radius: 99px;
+      padding: 3px;
+      margin-bottom: 24px;
+    }
+
+    .auth-toggle-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #6b7280;
+      border-radius: 99px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .auth-toggle-btn.active {
+      background: #ffffff;
+      color: #111827;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
   </style>
 </head>
 <body>
@@ -116,8 +149,20 @@
         <span class="brand-name" style="font-size: 1.25rem;">WePay</span>
       </div>
 
-      <h1 class="login-title">Aceder ao Painel Admin</h1>
-      <p class="login-sub">Introduza as suas credenciais para gerir cobranças e infoprodutos</p>
+      <h1 class="login-title" id="authTitle">Aceder à Sua Conta</h1>
+      <p class="login-sub" id="authSub">Introduza as suas credenciais para aceder ao painel</p>
+
+      <!-- Alternador de Abas: Entrar vs Criar Conta -->
+      <div class="auth-toggle-bar">
+        <button type="button" class="auth-toggle-btn active" id="tabLoginBtn">
+          <i data-lucide="log-in" style="width: 14px; height: 14px;"></i>
+          <span>Entrar</span>
+        </button>
+        <button type="button" class="auth-toggle-btn" id="tabRegisterBtn">
+          <i data-lucide="user-plus" style="width: 14px; height: 14px;"></i>
+          <span>Criar Conta</span>
+        </button>
+      </div>
 
       <!-- Alerta de Erro -->
       <div id="loginError" class="clean-error" style="display: none; margin-bottom: 20px; align-items: center; gap: 8px;">
@@ -125,78 +170,194 @@
         <span id="loginErrorText">E-mail ou palavra-passe incorretos.</span>
       </div>
 
-      <!-- Formulário de Login -->
-      <form id="loginForm" novalidate>
-        <div class="field-group">
-          <label class="field-label" for="loginEmail">E-mail de Administrador</label>
-          <input 
-            type="email" 
-            id="loginEmail" 
-            class="phone-input" 
-            style="padding-left: 14px; padding-right: 14px;" 
-            placeholder="admin@wepay.co.mz" 
-            required 
-            autocomplete="email"
-          >
-        </div>
+      <!-- PAINEL 1: FORMULÁRIO DE LOGIN -->
+      <div id="paneLogin">
+        <form id="loginForm" novalidate>
+          <div class="field-group">
+            <label class="field-label" for="loginEmail">E-mail</label>
+            <input 
+              type="email" 
+              id="loginEmail" 
+              class="phone-input" 
+              style="padding-left: 14px; padding-right: 14px;" 
+              placeholder="seuemail@exemplo.com" 
+              required 
+              autocomplete="email"
+            >
+          </div>
 
-        <div class="field-group">
-          <label class="field-label" for="loginPassword">Palavra-passe</label>
-          <div class="password-wrapper">
+          <div class="field-group">
+            <label class="field-label" for="loginPassword">Palavra-passe</label>
+            <div class="password-wrapper">
+              <input 
+                type="password" 
+                id="loginPassword" 
+                class="phone-input" 
+                style="padding-left: 14px; padding-right: 48px;" 
+                placeholder="••••••••" 
+                required 
+                autocomplete="current-password"
+              >
+              <button type="button" id="btnTogglePassword" class="btn-toggle-pwd" title="Mostrar / Ocultar" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px;">
+                <i data-lucide="eye" id="eyeIcon" style="width: 16px; height: 16px;"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" id="btnSubmitLogin" class="btn-pay" style="margin-top: 10px;">
+            <span class="btn-text" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+              <span>Iniciar Sessão</span>
+              <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+            </span>
+            <div class="btn-spinner" style="display: none; margin: 0 auto;"></div>
+          </button>
+        </form>
+
+        <!-- Dica de Credenciais Padrão com Preenchimento Automático -->
+        <div class="login-footer-info">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px;">
+            <i data-lucide="shield-check" style="width: 14px; height: 14px; color: #16a34a;"></i>
+            <span>Conta de Demonstração / Admin:</span>
+          </div>
+          <div style="margin-bottom: 8px;">
+            <span class="code-chip">admin@wepay.co.mz</span> / <span class="code-chip">admin123</span>
+          </div>
+          <button type="button" id="btnFillDemo" style="background: none; border: 1px solid var(--border); border-radius: 99px; padding: 4px 12px; font-size: 0.725rem; font-weight: 600; color: #4b5563; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: background 0.15s;">
+            <i data-lucide="sparkles" style="width: 12px; height: 12px; color: #111827;"></i>
+            <span>Preencher credenciais</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PAINEL 2: FORMULÁRIO DE REGISTRO (CRIAR CONTA) -->
+      <div id="paneRegister" style="display: none;">
+        <form id="registerForm" novalidate>
+          <div class="field-group">
+            <label class="field-label" for="regName">Nome Completo</label>
+            <input 
+              type="text" 
+              id="regName" 
+              class="phone-input" 
+              style="padding-left: 14px; padding-right: 14px;" 
+              placeholder="Ex: Afonso Domingos" 
+              required
+            >
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="regPhone">Telemóvel M-Pesa / e-Mola (Moçambique)</label>
+            <div class="phone-box">
+              <span class="prefix">+258</span>
+              <input 
+                type="tel" 
+                id="regPhone" 
+                class="phone-input" 
+                placeholder="84 123 4567" 
+                maxlength="12"
+              >
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="regEmail">E-mail Profissional</label>
+            <input 
+              type="email" 
+              id="regEmail" 
+              class="phone-input" 
+              style="padding-left: 14px; padding-right: 14px;" 
+              placeholder="exemplo@gmail.com" 
+              required 
+              autocomplete="email"
+            >
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="regPassword">Criar Palavra-passe</label>
             <input 
               type="password" 
-              id="loginPassword" 
+              id="regPassword" 
               class="phone-input" 
-              style="padding-left: 14px; padding-right: 48px;" 
-              placeholder="••••••••" 
+              style="padding-left: 14px; padding-right: 14px;" 
+              placeholder="Mínimo 6 caracteres" 
               required 
-              autocomplete="current-password"
+              minlength="6"
             >
-            <button type="button" id="btnTogglePassword" class="btn-toggle-pwd" title="Mostrar / Ocultar" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px;">
-              <i data-lucide="eye" id="eyeIcon" style="width: 16px; height: 16px;"></i>
-            </button>
           </div>
-        </div>
 
-        <button type="submit" id="btnSubmitLogin" class="btn-pay" style="margin-top: 10px;">
-          <span class="btn-text" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
-            <span>Iniciar Sessão</span>
-            <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
-          </span>
-          <div class="btn-spinner" style="display: none; margin: 0 auto;"></div>
-        </button>
-      </form>
+          <button type="submit" id="btnSubmitRegister" class="btn-pay" style="margin-top: 10px;">
+            <span class="btn-text" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+              <span>Criar Minha Conta Grátis</span>
+              <i data-lucide="check" style="width: 16px; height: 16px;"></i>
+            </span>
+            <div class="btn-spinner" style="display: none; margin: 0 auto;"></div>
+          </button>
+        </form>
 
-      <!-- Dica de Credenciais Padrão com Preenchimento Automático -->
-      <div class="login-footer-info">
-        <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px;">
-          <i data-lucide="shield-check" style="width: 14px; height: 14px; color: #16a34a;"></i>
-          <span>Credenciais do Administrador:</span>
+        <div class="login-footer-info">
+          <p style="font-size: 0.775rem; color: #6b7280;">
+            Ao criar conta, tem acesso imediato à emissão de cobranças C2B e venda de infoprodutos.
+          </p>
         </div>
-        <div style="margin-bottom: 8px;">
-          <span class="code-chip">admin@wepay.co.mz</span> / <span class="code-chip">admin123</span>
-        </div>
-        <button type="button" id="btnFillDemo" style="background: none; border: 1px solid var(--border); border-radius: 99px; padding: 4px 12px; font-size: 0.725rem; font-weight: 600; color: #4b5563; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: background 0.15s;">
-          <i data-lucide="sparkles" style="width: 12px; height: 12px; color: #111827;"></i>
-          <span>Preencher credenciais</span>
-        </button>
       </div>
 
     </div>
   </div>
 
   <script>
+    const tabLoginBtn = document.getElementById('tabLoginBtn');
+    const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+    const paneLogin = document.getElementById('paneLogin');
+    const paneRegister = document.getElementById('paneRegister');
+    const authTitle = document.getElementById('authTitle');
+    const authSub = document.getElementById('authSub');
+
     const loginForm = document.getElementById('loginForm');
     const loginEmail = document.getElementById('loginEmail');
     const loginPassword = document.getElementById('loginPassword');
     const btnSubmitLogin = document.getElementById('btnSubmitLogin');
-    const btnText = btnSubmitLogin.querySelector('.btn-text');
-    const btnSpinner = btnSubmitLogin.querySelector('.btn-spinner');
+
+    const registerForm = document.getElementById('registerForm');
+    const regName = document.getElementById('regName');
+    const regPhone = document.getElementById('regPhone');
+    const regEmail = document.getElementById('regEmail');
+    const regPassword = document.getElementById('regPassword');
+    const btnSubmitRegister = document.getElementById('btnSubmitRegister');
+
     const loginError = document.getElementById('loginError');
     const loginErrorText = document.getElementById('loginErrorText');
     const btnTogglePassword = document.getElementById('btnTogglePassword');
 
-    // Alternar visibilidade da senha com ícone Lucide
+    // Alternância de Abas: Entrar vs Criar Conta
+    function setAuthMode(mode) {
+      loginError.style.display = 'none';
+      if (mode === 'register') {
+        tabRegisterBtn.classList.add('active');
+        tabLoginBtn.classList.remove('active');
+        paneRegister.style.display = 'block';
+        paneLogin.style.display = 'none';
+        authTitle.textContent = 'Criar Nova Conta';
+        authSub.textContent = 'Comece a vender infoprodutos e receber pagamentos na WePay';
+      } else {
+        tabLoginBtn.classList.add('active');
+        tabRegisterBtn.classList.remove('active');
+        paneLogin.style.display = 'block';
+        paneRegister.style.display = 'none';
+        authTitle.textContent = 'Aceder à Sua Conta';
+        authSub.textContent = 'Introduza as suas credenciais para aceder ao painel';
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    tabLoginBtn.addEventListener('click', () => setAuthMode('login'));
+    tabRegisterBtn.addEventListener('click', () => setAuthMode('register'));
+
+    // Verifica parâmetro na URL (?mode=register ou rota /register)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'register' || window.location.pathname === '/register') {
+      setAuthMode('register');
+    }
+
+    // Alternar visibilidade da senha no login
     btnTogglePassword.addEventListener('click', () => {
       const isPwd = loginPassword.type === 'password';
       loginPassword.type = isPwd ? 'text' : 'password';
@@ -206,7 +367,7 @@
 
     if (window.lucide) lucide.createIcons();
 
-    // Preenchimento rápido com 1 clique
+    // Preenchimento rápido com 1 clique para demonstração
     document.getElementById('btnFillDemo').addEventListener('click', () => {
       loginEmail.value = 'admin@wepay.co.mz';
       loginPassword.value = 'admin123';
@@ -224,12 +385,11 @@
         if (res.ok) {
           window.location.replace('/admin');
         }
-      } catch (e) {
-        // não logado
-      }
+      } catch (e) {}
     }
     checkAuth();
 
+    // SUBMIT: LOGIN
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       loginError.style.display = 'none';
@@ -243,6 +403,8 @@
         return;
       }
 
+      const btnText = btnSubmitLogin.querySelector('.btn-text');
+      const btnSpinner = btnSubmitLogin.querySelector('.btn-spinner');
       btnSubmitLogin.disabled = true;
       btnText.style.display = 'none';
       btnSpinner.style.display = 'block';
@@ -257,7 +419,6 @@
         const data = await res.json();
 
         if (res.ok && data.success) {
-          // Armazena token persistente e redireciona
           if (data.token) {
             localStorage.setItem('wepay_auth_token', data.token);
             sessionStorage.setItem('wepay_auth_token', data.token);
@@ -274,6 +435,63 @@
         loginError.style.display = 'flex';
       } finally {
         btnSubmitLogin.disabled = false;
+        btnText.style.display = 'inline-flex';
+        btnSpinner.style.display = 'none';
+      }
+    });
+
+    // SUBMIT: CRIAR CONTA (REGISTRO)
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.style.display = 'none';
+
+      const name = regName.value.trim();
+      const phone = regPhone.value.trim();
+      const email = regEmail.value.trim();
+      const password = regPassword.value;
+
+      if (!name || !email || !password) {
+        loginErrorText.textContent = 'Por favor, preencha todos os campos obrigatórios.';
+        loginError.style.display = 'flex';
+        return;
+      }
+
+      if (password.length < 6) {
+        loginErrorText.textContent = 'A palavra-passe deve ter pelo menos 6 caracteres.';
+        loginError.style.display = 'flex';
+        return;
+      }
+
+      const btnText = btnSubmitRegister.querySelector('.btn-text');
+      const btnSpinner = btnSubmitRegister.querySelector('.btn-spinner');
+      btnSubmitRegister.disabled = true;
+      btnText.style.display = 'none';
+      btnSpinner.style.display = 'block';
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, phone, email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          if (data.token) {
+            localStorage.setItem('wepay_auth_token', data.token);
+            sessionStorage.setItem('wepay_auth_token', data.token);
+          }
+          window.location.href = '/admin';
+        } else {
+          loginErrorText.textContent = data.error?.message || 'Erro ao criar conta.';
+          loginError.style.display = 'flex';
+        }
+      } catch (err) {
+        loginErrorText.textContent = 'Erro de comunicação ao criar conta.';
+        loginError.style.display = 'flex';
+      } finally {
+        btnSubmitRegister.disabled = false;
         btnText.style.display = 'inline-flex';
         btnSpinner.style.display = 'none';
       }

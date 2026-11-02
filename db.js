@@ -43,6 +43,19 @@ const productSchema = new mongoose.Schema({
 const Payment = mongoose.model('Payment', paymentSchema);
 const Product = mongoose.model('Product', productSchema);
 
+// Schema de Utilizadores / Vendedores
+const userSchema = new mongoose.Schema({
+  id: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+  password: { type: String, required: true },
+  phone: { type: String, default: '' },
+  role: { type: String, enum: ['admin', 'seller'], default: 'seller' },
+  createdAt: { type: Date, default: Date.now }
+});
+
+const User = mongoose.model('User', userSchema);
+
 let isConnected = false;
 
 async function connectMongo(uri) {
@@ -101,6 +114,7 @@ async function connectMongo(uri) {
 module.exports = {
   Payment,
   Product,
+  User,
   connectMongo,
   isDbConnected: () => isConnected
 };

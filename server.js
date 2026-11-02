@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
 
-const { Payment, Product, connectMongo, isDbConnected } = require('./db');
+const { Payment, Product, User, connectMongo, isDbConnected } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,13 +15,13 @@ const MONGODB_URI = process.env.MONGODB_URI || '';
 // Inicia conexão assíncrona com MongoDB Atlas
 connectMongo(MONGODB_URI);
 
-// Credenciais de Administrador
+// Credenciais de Administrador Padrão (.env)
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@wepay.co.mz').toLowerCase().trim();
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 const ADMIN_NAME = process.env.ADMIN_NAME || 'Administrador WePay';
 
-// Sessões ativas em memória
-const activeAuthTokens = new Set();
+// Sessões ativas em memória: token -> { id, email, name, role }
+const activeAuthSessions = new Map();
 
 // Modo de operação em memória (pode ser alternado dinamicamente pelo admin)
 let currentPaymentMode = process.env.PAYMENT_MODE || (KIVORA_SECRET_KEY ? 'live' : 'simulator');
@@ -34,6 +34,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Caminhos dos bancos de dados JSON locais (Fallback)
 const DB_PAYMENTS = path.join(__dirname, 'data', 'payments.json');
 const DB_PRODUCTS = path.join(__dirname, 'data', 'products.json');
+const DB_USERS = path.join(__dirname, 'data', 'users.json');
+
+function getStoredUsers() {
+  try {
+    if (!fs.existsSync(DB_USERS)) return [];
+    const data = fs.readFileSync(DB_USERS, 'utf8');
+    return JSON.parse(data || '[]');
+  } catch (err) {
+    return [];
+  }
+}
 
 // --- CAMADA DE PERSISTÊNCIA (MONGODB + FALLBACK JSON) ---
 async function getStoredPayments() {
@@ -147,28 +158,151 @@ const mockPaymentsDb = new Map();
  * ========================================================
  */
 
-// Tela de Login
+// Tela de Login e Registro
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// Processar Login
-app.post('/api/auth/login', (req, res) => {
-  const { email, password } = req.body;
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
 
+// Criar Nova Conta (Registro de Vendedor / Produtor Digital)
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { name, email, password, phone } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        error: { message: 'Nome, e-mail e palavra-passe são obrigatórios.' }
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        error: { message: 'A palavra-passe deve conter pelo menos 6 caracteres.' }
+      });
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+
+    // Verifica se e-mail já existe
+    let existingUser = null;
+    if (isDbConnected()) {
+      existingUser = await User.findOne({ email: cleanEmail });
+    } else {
+      const users = getStoredUsers();
+      existingUser = users.find(u => u.email === cleanEmail);
+    }
+
+    if (existingUser || cleanEmail === ADMIN_EMAIL) {
+      return res.status(400).json({
+        error: { message: 'Já existe uma conta cadastrada com este e-mail. Faça login.' }
+      });
+    }
+
+    const newUser = {
+      id: `usr_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      name: name.trim(),
+      email: cleanEmail,
+      password: password,
+      phone: phone ? phone.trim() : '',
+      role: 'seller',
+      createdAt: new Date()
+    };
+
+    if (isDbConnected()) {
+      await User.create(newUser);
+    } else {
+      const users = getStoredUsers();
+      users.push(newUser);
+      fs.writeFileSync(DB_USERS, JSON.stringify(users, null, 2), 'utf8');
+    }
+
+    const token = `auth_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+    activeAuthSessions.set(token, {
+      id: newUser.id,
+      email: newUser.email,
+      name: newUser.name,
+      role: newUser.role
+    });
+
+    console.log(`[Auth] Nova conta criada com sucesso: ${newUser.name} (${newUser.email})`);
+
+    return res.status(201).json({
+      success: true,
+      token,
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        name: newUser.name,
+        role: newUser.role
+      }
+    });
+  } catch (err) {
+    console.error('Erro no registro:', err);
+    res.status(500).json({ error: { message: 'Erro ao criar conta no servidor.' } });
+  }
+});
+
+// Processar Login
+app.post('/api/auth/login', async (req, res) => {
+  const { email, password } = req.body;
   const cleanEmail = (email || '').toLowerCase().trim();
+
+  // 1. Testa credencial de administrador mestre (.env)
   if (cleanEmail === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
     const token = `auth_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
-    activeAuthTokens.add(token);
-    console.log(`[Auth] Login realizado com sucesso por: ${cleanEmail}`);
+    activeAuthSessions.set(token, {
+      id: 'admin_root',
+      email: ADMIN_EMAIL,
+      name: ADMIN_NAME,
+      role: 'admin'
+    });
+    console.log(`[Auth] Login como Administrador: ${cleanEmail}`);
     return res.json({
       success: true,
       token,
       user: {
         email: ADMIN_EMAIL,
-        name: ADMIN_NAME
+        name: ADMIN_NAME,
+        role: 'admin'
       }
     });
+  }
+
+  // 2. Busca utilizador registrado no MongoDB Atlas / local
+  try {
+    let user = null;
+    if (isDbConnected()) {
+      user = await User.findOne({ email: cleanEmail });
+    } else {
+      const users = getStoredUsers();
+      user = users.find(u => u.email === cleanEmail);
+    }
+
+    if (user && user.password === password) {
+      const token = `auth_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+      activeAuthSessions.set(token, {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role || 'seller'
+      });
+      console.log(`[Auth] Login de vendedor: ${user.name} (${user.email})`);
+      return res.json({
+        success: true,
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role || 'seller'
+        }
+      });
+    }
+  } catch (err) {
+    console.error('Erro ao verificar login no banco:', err);
   }
 
   res.status(401).json({
@@ -184,13 +318,11 @@ app.get('/api/auth/me', (req, res) => {
   const authHeader = req.headers.authorization;
   const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
 
-  if (token && activeAuthTokens.has(token)) {
+  if (token && activeAuthSessions.has(token)) {
+    const session = activeAuthSessions.get(token);
     return res.json({
       authenticated: true,
-      user: {
-        email: ADMIN_EMAIL,
-        name: ADMIN_NAME
-      }
+      user: session
     });
   }
 
@@ -202,7 +334,7 @@ app.post('/api/auth/logout', (req, res) => {
   const authHeader = req.headers.authorization;
   const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
   if (token) {
-    activeAuthTokens.delete(token);
+    activeAuthSessions.delete(token);
   }
   res.json({ success: true });
 });
