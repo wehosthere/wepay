@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WePay | Área do Cliente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="/vendor/lucide.min.js"></script>
+  <script>
+    if (!window.lucide) {
+      document.write('<script src="https://unpkg.com/lucide@latest"><\/script>');
+    }
+  </script>
+  <style>
+    /* Estilos da Área do Cliente - Tema Branco Puro */
+    :root {
+      --client-bg: #fcfcfd;
+    }
+
+    body {
+      background-color: var(--client-bg);
+    }
+
+    .client-container {
+      max-width: 1120px;
+      margin: 32px auto;
+      padding: 0 24px;
+      width: 100%;
+    }
+
+    .client-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .client-title-wrap h1 {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #111827;
+    }
+
+    .client-subtitle {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .client-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Abas de Navegação */
+    .nav-tabs-wrapper {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1.5px solid var(--border);
+      margin-bottom: 28px;
+      padding-bottom: 2px;
+    }
+
+    .nav-tab-btn {
+      padding: 10px 18px;
+      border: none;
+      background: none;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #6b7280;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.15s;
+    }
+
+    .nav-tab-btn:hover {
+      color: #111827;
+    }
+
+    .nav-tab-btn.active {
+      color: #111827;
+    }
+
+    .nav-tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -3.5px;
+      left: 0;
+      width: 100%;
+      height: 2.5px;
+      background: #111827;
+      border-radius: 99px;
+    }
+
+    .tab-counter {
+      background: #f3f4f6;
+      color: #4b5563;
+      padding: 2px 7px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Grid de Estatísticas */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    .stat-label {
+      font-size: 0.775rem;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .stat-value {
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #111827;
+      margin-top: 8px;
+    }
+
+    .stat-value.highlight {
+      color: #16a34a;
+    }
+
+    /* Tabela de Transações */
+    .table-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+      overflow: hidden;
+    }
+
+    .table-header-bar {
+      padding: 16px 20px;
+      border-bottom: 1.5px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .table-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .client-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    .client-table th {
+      background: #fafafa;
+      padding: 12px 20px;
+      font-weight: 600;
+      color: #6b7280;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .client-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      color: #111827;
+    }
+
+    .client-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .client-table tr:hover td {
+      background: #fafbfc;
+    }
+
+    .phone-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+
+    .mini-logo {
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      object-fit: contain;
+      border: 1px solid #eaecf0;
+      background: #ffffff;
+      padding: 2px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .status-badge.paid {
+      background: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+
+    .status-badge.pending {
+      background: #fffbeb;
+      color: #d97706;
+      border: 1px solid #fde68a;
+    }
+
+    .status-badge.failed {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+
+    /* Grid de Infoprodutos */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.15s ease;
+    }
+
+    .product-card:hover {
+      border-color: #d1d5db;
+      box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06);
+    }
+
+    .product-top-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    .product-top-badge.download {
+      background: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+
+    .product-top-badge.link {
+      background: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+    }
+
+    .product-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 6px;
+      line-height: 1.35;
+    }
+
+    .product-desc {
+      font-size: 0.8rem;
+      color: #6b7280;
+      line-height: 1.45;
+      margin-bottom: 16px;
+      min-height: 38px;
+    }
+
+    .product-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 12px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+
+    .product-price {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .product-sales {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #4b5563;
+      background: #f3f4f6;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .product-actions-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-copy-link {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      font-family: inherit;
+      font-size: 0.775rem;
+      font-weight: 700;
+      color: #111827;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-copy-link:hover {
+      background: #f9fafb;
+      border-color: #111827;
+    }
+
+    .btn-product-menu {
+      padding: 8px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      color: #6b7280;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+
+    .btn-product-menu:hover {
+      border-color: #dc2626;
+      color: #dc2626;
+      background: #fef2f2;
+    }
+
+    /* Modais */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.4);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      animation: fadeIn 0.15s ease-out;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.12);
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .modal-sub {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-bottom: 24px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    /* Notificações Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast-item {
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.825rem;
+      font-weight: 600;
+      pointer-events: auto;
+      animation: toastIn 0.2s ease-out;
+      min-width: 280px;
+      max-width: 420px;
+    }
+
+    .toast-item.success {
+      border-left: 4px solid #16a34a;
+      color: #16a34a;
+    }
+
+    .toast-item.error {
+      border-left: 4px solid #dc2626;
+      color: #dc2626;
+    }
+
+    .toast-item.info {
+      border-left: 4px solid #111827;
+      color: #111827;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Topo da Área do Cliente -->
+  <header class="clean-header">
+    <div class="header-inner" style="justify-content: space-between;">
+      <div class="brand">
+        <span class="brand-icon"></span>
+        <span class="brand-name">WePay <span style="font-weight: 500; font-size: 0.8rem; color: #6b7280; margin-left: 6px;">Área do Cliente</span></span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="/" target="_blank" style="text-decoration: none; font-size: 0.825rem; font-weight: 600; color: #111827; padding: 7px 14px; border: 1.5px solid #eaecf0; border-radius: 99px; background: #ffffff; display: flex; align-items: center; gap: 6px;">
+          <span>Checkout</span>
+          <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+        </a>
+
+        <!-- Link para painel Admin caso logado como administrador mestre -->
+        <a href="/admin" id="linkToMasterAdmin" style="display: none; text-decoration: none; font-size: 0.825rem; font-weight: 700; color: #2563eb; padding: 7px 14px; border: 1.5px solid #bfdbfe; border-radius: 99px; background: #eff6ff;">
+          <span>Painel Admin ↗</span>
+        </a>
+
+        <!-- Identificação do Utilizador e Logout -->
+        <div style="display: flex; align-items: center; gap: 8px; border-left: 1px solid var(--border); padding-left: 12px; margin-left: 2px;">
+          <div style="text-align: right;">
+            <div id="clientUserName" style="font-size: 0.8rem; color: #111827; font-weight: 700;">A Carregar...</div>
+            <div id="clientUserEmail" style="font-size: 0.725rem; color: #6b7280; font-weight: 500;">...</div>
+          </div>
+          <button id="btnLogout" style="background: #ffffff; border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; font-size: 0.75rem; font-weight: 600; color: #dc2626; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 4px;" title="Encerrar sessão">
+            <i data-lucide="log-out" style="width: 13px; height: 13px;"></i>
+            <span>Sair</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="client-container">
+
+    <!-- Navegação por Abas: Meus Infoprodutos vs Minhas Cobranças -->
+    <div class="nav-tabs-wrapper">
+      <button class="nav-tab-btn active" data-tab="tabMyProducts">
+        <i data-lucide="package" style="width: 16px; height: 16px;"></i>
+        <span>Meus Infoprodutos & Links de Venda</span>
+        <span class="tab-counter" id="countProductsBadge">0</span>
+      </button>
+      <button class="nav-tab-btn" data-tab="tabMyCharges">
+        <i data-lucide="credit-card" style="width: 16px; height: 16px;"></i>
+        <span>Minhas Cobranças & Faturas</span>
+      </button>
+    </div>
+
+    <!-- ABA 1: MEUS INFOPRODUTOS (FOCO DO CLIENTE/VENDEDOR) -->
+    <div id="tabMyProducts" class="tab-pane active">
+      <div class="client-header">
+        <div class="client-title-wrap">
+          <h1>Meus Infoprodutos Digitais</h1>
+          <p class="client-subtitle">Cadastre os seus e-books, cursos, mentorias e gere links de pagamento automáticos</p>
+        </div>
+        <div class="client-actions">
+          <button id="btnOpenNewProduct" class="btn-pay" style="width: auto; padding: 10px 18px; display: inline-flex; align-items: center; gap: 6px;">
+            <i data-lucide="plus" style="width: 15px; height: 15px;"></i>
+            <span>Cadastrar Novo Infoproduto</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Métricas Resumidas do Vendedor -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label" style="display: flex; align-items: center; gap: 6px;">
+            <i data-lucide="wallet" style="width: 14px; height: 14px; color: #16a34a;"></i>
+            Faturamento em Vendas
+          </span>
+          <div class="stat-value highlight" id="statClientRevenue">0,00 MZN</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label" style="display: flex; align-items: center; gap: 6px;">
+            <i data-lucide="package" style="width: 14px; height: 14px; color: #2563eb;"></i>
+            Infoprodutos Ativos
+          </span>
+          <div class="stat-value" id="statClientProductsCount">0</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label" style="display: flex; align-items: center; gap: 6px;">
+            <i data-lucide="check-circle-2" style="width: 14px; height: 14px; color: #16a34a;"></i>
+            Vendas Concluídas
+          </span>
+          <div class="stat-value" id="statClientTotalSales">0</div>
+        </div>
+      </div>
+
+      <!-- Grid de Infoprodutos -->
+      <div class="products-grid" id="productsGridContainer">
+        <!-- Injetado dinamicamente via Javascript -->
+      </div>
+    </div>
+
+    <!-- ABA 2: MINHAS COBRANÇAS & FATURAS -->
+    <div id="tabMyCharges" class="tab-pane">
+      <div class="client-header">
+        <div class="client-title-wrap">
+          <h1>Histórico de Cobranças & Faturas</h1>
+          <p class="client-subtitle">Transações recebidas via M-Pesa e e-Mola com numeração de fatura automática</p>
+        </div>
+        <div class="client-actions">
+          <button id="btnOpenNewCharge" class="btn-clean-secondary" style="width: auto; padding: 10px 18px; display: inline-flex; align-items: center; gap: 6px;">
+            <i data-lucide="plus" style="width: 15px; height: 15px;"></i>
+            <span>Disparar Cobrança C2B</span>
+          </button>
+          <button id="btnRefreshList" class="btn-pay" style="width: auto; padding: 10px 18px; display: inline-flex; align-items: center; gap: 6px;">
+            <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i>
+            <span>Atualizar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabela de Faturas -->
+      <div class="table-card">
+        <div class="table-header-bar">
+          <span class="table-title">Faturas Emitidas</span>
+          <div class="table-filters">
+            <button class="filter-btn active" data-filter="all">Todas</button>
+            <button class="filter-btn" data-filter="paid">Pagas</button>
+            <button class="filter-btn" data-filter="pending">Pendentes</button>
+            <button class="filter-btn" data-filter="failed">Falhadas</button>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="client-table">
+            <thead>
+              <tr>
+                <th>Nº Fatura / ID</th>
+                <th>Telemóvel</th>
+                <th>Montante</th>
+                <th>Estado</th>
+                <th>Data</th>
+                <th style="text-align: right;">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsTableBody">
+              <tr>
+                <td colspan="6" style="text-align: center; color: #9ca3af; padding: 36px;">
+                  A carregar faturas...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL: Cadastrar Infoproduto -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-card">
+      <h2 class="modal-title">Novo Infoproduto</h2>
+      <p class="modal-sub">Defina o preço e o link para entrega automática após o pagamento.</p>
+
+      <form id="createProductForm">
+        <div class="field-group">
+          <label class="field-label">Nome do Infoproduto</label>
+          <input type="text" id="prodName" class="phone-input" style="padding-left: 14px; padding-right: 14px;" placeholder="Ex: E-book: Guia de Tráfego Pago" required>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Preço de Venda (MZN)</label>
+          <input type="number" id="prodPrice" class="phone-input" style="padding-left: 14px; padding-right: 14px;" placeholder="Ex: 350" min="1" required>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Descrição Curta</label>
+          <input type="text" id="prodDesc" class="phone-input" style="padding-left: 14px; padding-right: 14px;" placeholder="Ex: Acesso vitalício ao guia com estratégias práticas">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Tipo de Entrega</label>
+          <select id="prodDeliveryType" class="phone-input" style="padding-left: 14px; padding-right: 14px; font-weight: 500; cursor: pointer;">
+            <option value="download">Download Direto (PDF / Arquivo na Nuvem)</option>
+            <option value="link">Link de Acesso (Grupo VIP WhatsApp / Telegram / Membros)</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Link de Entrega (URL do Arquivo ou Grupo)</label>
+          <input type="url" id="prodDeliveryUrl" class="phone-input" style="padding-left: 14px; padding-right: 14px;" placeholder="Ex: https://chat.whatsapp.com/... ou link do Google Drive" required>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="btnCloseProductModal" class="btn-clean-secondary">Cancelar</button>
+          <button type="submit" id="btnSaveProduct" class="btn-pay">
+            <span>Criar e Gerar Link</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Disparar Cobrança C2B -->
+  <div class="modal-overlay" id="chargeModal">
+    <div class="modal-card">
+      <h2 class="modal-title">Disparar Cobrança C2B</h2>
+      <p class="modal-sub">O cliente receberá uma notificação no telemóvel para introduzir o PIN.</p>
+
+      <form id="clientChargeForm">
+        <div class="field-group">
+          <label class="field-label">Telemóvel do Cliente (Moçambique)</label>
+          <div class="phone-box">
+            <span class="prefix">+258</span>
+            <input type="tel" id="clientPhone" class="phone-input" placeholder="84 787 7405" required maxlength="12">
+            <div class="badge-operator" id="clientOperatorPill">
+              <span id="clientOperatorText">Auto</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Montante (MZN)</label>
+          <input type="number" id="clientAmount" class="phone-input" style="padding-left: 16px; padding-right: 16px;" value="100" min="1" required>
+        </div>
+
+        <div class="field-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="field-label" style="margin-bottom: 0;">Número da Fatura (Gerado Automaticamente)</label>
+            <button type="button" id="btnGenNewInvoice" style="background: none; border: none; font-size: 0.725rem; font-weight: 600; color: #4b5563; cursor: pointer; display: flex; align-items: center; gap: 4px;" title="Gerar outro número de fatura">
+              <i data-lucide="refresh-cw" style="width: 12px; height: 12px;"></i>
+              <span>Gerar Novo</span>
+            </button>
+          </div>
+          <div style="position: relative; display: flex; align-items: center;">
+            <input type="text" id="clientInvoiceRef" class="phone-input" style="padding-left: 14px; padding-right: 75px; font-family: monospace; font-weight: 700; letter-spacing: 0.02em;" placeholder="FAT-2026-0001" required>
+            <span style="position: absolute; right: 12px; font-size: 0.725rem; color: #16a34a; font-weight: 700; display: flex; align-items: center; gap: 3px; background: #f0fdf4; padding: 2px 6px; border-radius: 4px; border: 1px solid #bbf7d0;">
+              <i data-lucide="sparkles" style="width: 11px; height: 11px;"></i> Auto
+            </span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Descrição do Pedido (Opcional)</label>
+          <input type="text" id="clientOrderDesc" class="phone-input" style="padding-left: 16px; padding-right: 16px;" placeholder="Ex: Subscrição Mensal ou Venda Direta">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="btnCloseChargeModal" class="btn-clean-secondary">Cancelar</button>
+          <button type="submit" id="btnSendClientCharge" class="btn-pay">
+            <span class="btn-text">Enviar Cobrança</span>
+            <div class="btn-spinner" style="display: none; margin: 0 auto;"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // --- AUTENTICAÇÃO OBRIGATÓRIA DO CLIENTE / VENDEDOR ---
+    const authToken = localStorage.getItem('wepay_auth_token') || sessionStorage.getItem('wepay_auth_token');
+    if (!authToken) {
+      window.location.replace('/login');
+    }
+
+    async function checkClientAuth() {
+      try {
+        const res = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (!res.ok) {
+          localStorage.removeItem('wepay_auth_token');
+          sessionStorage.removeItem('wepay_auth_token');
+          window.location.replace('/login');
+          return;
+        }
+        const data = await res.json();
+        if (data.user) {
+          document.getElementById('clientUserName').textContent = data.user.name || 'Cliente WePay';
+          document.getElementById('clientUserEmail').textContent = data.user.email || '';
+          // Se for o administrador mestre, mostra atalho para o painel de administração geral
+          if (data.user.role === 'admin') {
+            document.getElementById('linkToMasterAdmin').style.display = 'inline-flex';
+          }
+        }
+      } catch (err) {
+        window.location.replace('/login');
+      }
+    }
+    checkClientAuth();
+
+    // Logout
+    document.getElementById('btnLogout').addEventListener('click', async () => {
+      try {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+      } catch (e) {}
+      localStorage.removeItem('wepay_auth_token');
+      sessionStorage.removeItem('wepay_auth_token');
+      window.location.replace('/login');
+    });
+
+    let allPayments = [];
+    let allProducts = [];
+    let currentFilter = 'all';
+
+    const MPESA_IMG = "https://publiceyenews.com/wp-content/uploads/2021/07/mpesa.jpg";
+    const EMOLA_IMG = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSookw-aKR2BGLUEfckV0RaECrjDasgp4TH5VLb0j5KIpyhVm0wyMQEwIhs&s=10";
+
+    // Sistema de Notificações Toast
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast-item ${type}`;
+
+      let iconHtml = '<i data-lucide="info" style="width: 16px; height: 16px;"></i>';
+      if (type === 'success') iconHtml = '<i data-lucide="check-circle-2" style="width: 16px; height: 16px; color: #16a34a;"></i>';
+      if (type === 'error') iconHtml = '<i data-lucide="alert-circle" style="width: 16px; height: 16px; color: #dc2626;"></i>';
+
+      toast.innerHTML = `
+        <span style="display: flex; align-items: center;">${iconHtml}</span>
+        <span style="flex: 1;">${message}</span>
+      `;
+
+      container.appendChild(toast);
+      if (window.lucide) lucide.createIcons({ root: toast });
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(8px)';
+        setTimeout(() => toast.remove(), 250);
+      }, 4000);
+    }
+
+    function formatMZN(val) {
+      return new Intl.NumberFormat('pt-MZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val || 0);
+    }
+
+    // Gestão de Abas
+    document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+        btn.classList.add('active');
+        const target = document.getElementById(btn.dataset.tab);
+        if (target) target.classList.add('active');
+      });
+    });
+
+    // Carregar Métricas do Cliente
+    function updateClientStats() {
+      const totalRevenue = allProducts.reduce((sum, p) => sum + (p.revenue || 0), 0);
+      const totalSales = allProducts.reduce((sum, p) => sum + (p.salesCount || 0), 0);
+      document.getElementById('statClientRevenue').textContent = `${formatMZN(totalRevenue)} MZN`;
+      document.getElementById('statClientProductsCount').textContent = allProducts.length;
+      document.getElementById('statClientTotalSales').textContent = totalSales;
+      document.getElementById('countProductsBadge').textContent = allProducts.length;
+    }
+
+    // Carregar Infoprodutos
+    async function loadProducts() {
+      try {
+        const res = await fetch('/api/products');
+        if (!res.ok) return;
+        allProducts = await res.json();
+        renderProducts();
+        updateClientStats();
+      } catch (err) {
+        console.error('Erro ao buscar produtos:', err);
+      }
+    }
+
+    function renderProducts() {
+      const container = document.getElementById('productsGridContainer');
+      if (allProducts.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; background: #ffffff; border: 1.5px dashed var(--border); border-radius: var(--radius-md); padding: 48px 24px; text-align: center;">
+            <i data-lucide="package-search" style="width: 44px; height: 44px; stroke-width: 1.5; color: #9ca3af; margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto;"></i>
+            <h3 style="font-weight: 800; font-size: 1.15rem; margin-bottom: 4px;">Ainda não tem infoprodutos cadastrados</h3>
+            <p style="color: #6b7280; font-size: 0.85rem; margin-bottom: 20px;">Cadastre o seu primeiro e-book ou curso para começar a vender online em Moçambique.</p>
+            <button onclick="document.getElementById('productModal').classList.add('active')" class="btn-pay" style="width: auto; margin: 0 auto; padding: 10px 22px; display: inline-flex; align-items: center; gap: 6px;">
+              <i data-lucide="plus" style="width: 15px; height: 15px;"></i>
+              <span>Cadastrar Meu Primeiro Infoproduto</span>
+            </button>
+          </div>
+        `;
+        if (window.lucide) lucide.createIcons({ root: container });
+        return;
+      }
+
+      const baseUrl = window.location.origin;
+
+      container.innerHTML = allProducts.map(prod => {
+        const isDownload = prod.deliveryType === 'download';
+        const badgeClass = isDownload ? 'download' : 'link';
+        const badgeIcon = isDownload 
+          ? '<i data-lucide="download" style="width: 13px; height: 13px; margin-right: 4px;"></i>' 
+          : '<i data-lucide="users" style="width: 13px; height: 13px; margin-right: 4px;"></i>';
+        const badgeLabel = `${badgeIcon} ${isDownload ? 'Download Direto' : 'Grupo VIP / Link'}`;
+        const checkoutUrl = `${baseUrl}/?product=${prod.id}`;
+
+        return `
+          <div class="product-card">
+            <div>
+              <span class="product-top-badge ${badgeClass}" style="display: inline-flex; align-items: center;">${badgeLabel}</span>
+              <h3 class="product-title">${prod.name}</h3>
+              <p class="product-desc">${prod.description || 'Sem descrição informada.'}</p>
+            </div>
+
+            <div>
+              <div class="product-meta-row">
+                <div>
+                  <span style="font-size: 0.7rem; font-weight: 700; color: #9ca3af; text-transform: uppercase;">Preço</span>
+                  <div class="product-price">${formatMZN(prod.price)} <span style="font-size: 0.75rem; color: #6b7280;">MZN</span></div>
+                </div>
+                <div style="text-align: right;">
+                  <span style="font-size: 0.7rem; font-weight: 700; color: #9ca3af; text-transform: uppercase;">Vendas</span>
+                  <div class="product-sales">${prod.salesCount || 0} vendidas</div>
+                </div>
+              </div>
+
+              <div class="product-actions-bar">
+                <button class="btn-copy-link" onclick="copyProductLink('${checkoutUrl}')" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                  <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+                  <span>Copiar Link</span>
+                </button>
+                <a href="${checkoutUrl}" target="_blank" class="btn-product-menu" title="Testar Checkout do Produto" style="display: inline-flex; align-items: center; justify-content: center;">
+                  <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+                </a>
+                <button class="btn-product-menu" onclick="deleteProduct('${prod.id}')" title="Excluir Produto" style="display: inline-flex; align-items: center; justify-content: center;">
+                  <i data-lucide="trash-2" style="width: 14px; height: 14px; color: #dc2626;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (window.lucide) lucide.createIcons({ root: container });
+    }
+
+    function copyProductLink(url) {
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('Link de checkout copiado! Partilhe com os seus clientes no WhatsApp ou Redes.', 'success');
+      }).catch(() => {
+        prompt('Copie o seu link de venda:', url);
+      });
+    }
+
+    async function deleteProduct(productId) {
+      if (!confirm('Deseja realmente remover este infoproduto?')) return;
+      try {
+        const res = await fetch(`/api/products/${productId}`, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('Infoproduto removido com sucesso.', 'info');
+          await loadProducts();
+        }
+      } catch (e) {
+        showToast('Erro ao remover produto.', 'error');
+      }
+    }
+
+    // Modal de Infoproduto
+    const productModal = document.getElementById('productModal');
+    document.getElementById('btnOpenNewProduct').addEventListener('click', () => productModal.classList.add('active'));
+    document.getElementById('btnCloseProductModal').addEventListener('click', () => productModal.classList.remove('active'));
+
+    document.getElementById('createProductForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('prodName').value;
+      const price = parseFloat(document.getElementById('prodPrice').value);
+      const desc = document.getElementById('prodDesc').value;
+      const deliveryType = document.getElementById('prodDeliveryType').value;
+      const deliveryUrl = document.getElementById('prodDeliveryUrl').value;
+
+      try {
+        const res = await fetch('/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, price, description: desc, deliveryType, deliveryUrl })
+        });
+
+        if (res.ok) {
+          const newProd = await res.json();
+          showToast(`Infoproduto "${newProd.name}" criado com sucesso!`, 'success');
+          productModal.classList.remove('active');
+          document.getElementById('createProductForm').reset();
+          await loadProducts();
+        } else {
+          showToast('Erro ao cadastrar infoproduto.', 'error');
+        }
+      } catch (err) {
+        showToast('Erro de conexão ao salvar produto.', 'error');
+      }
+    });
+
+    // Carregar Cobranças
+    async function loadPayments() {
+      try {
+        const res = await fetch('/api/admin/payments');
+        if (!res.ok) return;
+        allPayments = await res.json();
+        renderTable();
+      } catch (err) {
+        console.error('Erro ao buscar pagamentos:', err);
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('paymentsTableBody');
+      const filtered = allPayments.filter(p => {
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'paid') return p.status === 'paid' || p.status === 'completed';
+        if (currentFilter === 'pending') return p.status === 'pending' || p.status === 'processing';
+        if (currentFilter === 'failed') return p.status === 'failed' || p.status === 'cancelled';
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; color: #9ca3af; padding: 36px;">
+              <i data-lucide="inbox" style="width: 28px; height: 28px; stroke-width: 1.5; color: #9ca3af; margin-bottom: 8px; display: block; margin-left: auto; margin-right: auto;"></i>
+              Nenhuma cobrança encontrada.
+            </td>
+          </tr>
+        `;
+        if (window.lucide) lucide.createIcons({ root: tbody });
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(p => {
+        const isMpesa = p.operator === 'mpesa' || (p.phone && (p.phone.startsWith('84') || p.phone.startsWith('85')));
+        const logo = isMpesa ? MPESA_IMG : EMOLA_IMG;
+        const opName = isMpesa ? 'M-Pesa' : 'e-Mola';
+
+        let badgeClass = 'pending';
+        let statusText = 'Pendente';
+        if (p.status === 'paid' || p.status === 'completed') {
+          badgeClass = 'paid';
+          statusText = 'Pago';
+        } else if (p.status === 'failed' || p.status === 'cancelled') {
+          badgeClass = 'failed';
+          statusText = 'Falhado';
+        }
+
+        const dateStr = p.createdAt ? new Date(p.createdAt).toLocaleString('pt-MZ', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight: 700;">${p.reference || '—'}</div>
+              <div style="font-family: monospace; font-size: 0.75rem; color: #6b7280;">${p.id}</div>
+            </td>
+            <td>
+              <div class="phone-cell">
+                <img src="${logo}" class="mini-logo" alt="${opName}">
+                <span>+258 ${p.phone || '—'}</span>
+              </div>
+            </td>
+            <td>
+              <strong>${formatMZN(p.amount)}</strong> <span style="font-size: 0.75rem; color: #6b7280;">MZN</span>
+            </td>
+            <td>
+              <span class="status-badge ${badgeClass}">${statusText}</span>
+            </td>
+            <td style="color: #6b7280; font-size: 0.8rem;">
+              ${dateStr}
+            </td>
+            <td style="text-align: right;">
+              <button class="btn-action-refresh" onclick="verifyPaymentStatus('${p.id}')" style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: #ffffff; cursor: pointer; font-size: 0.75rem; font-weight: 600;">
+                <i data-lucide="refresh-cw" style="width: 12px; height: 12px;"></i>
+                <span>Checar</span>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      if (window.lucide) lucide.createIcons({ root: tbody });
+    }
+
+    async function verifyPaymentStatus(paymentId) {
+      try {
+        showToast('Consultando estado da fatura...', 'info');
+        const res = await fetch(`/api/payments/c2b/${paymentId}`);
+        if (res.ok) {
+          await loadPayments();
+          showToast('Status atualizado!', 'success');
+        }
+      } catch (e) {
+        showToast('Erro ao checar status.', 'error');
+      }
+    }
+
+    // Filtros de Tabela
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderTable();
+      });
+    });
+
+    document.getElementById('btnRefreshList').addEventListener('click', async () => {
+      await loadPayments();
+      await loadProducts();
+      showToast('Dados atualizados', 'info');
+    });
+
+    // Modal de Cobrança C2B com Geração Automática de Fatura
+    const chargeModal = document.getElementById('chargeModal');
+    const clientPhoneInput = document.getElementById('clientPhone');
+    const clientInvoiceRefInput = document.getElementById('clientInvoiceRef');
+    const clientOpPill = document.getElementById('clientOperatorPill');
+    const clientOpText = document.getElementById('clientOperatorText');
+
+    async function loadNextInvoiceForClient() {
+      try {
+        const res = await fetch('/api/invoices/next');
+        if (res.ok) {
+          const data = await res.json();
+          clientInvoiceRefInput.value = data.invoiceNumber;
+          return;
+        }
+      } catch (e) {}
+      const year = new Date().getFullYear();
+      clientInvoiceRefInput.value = `FAT-${year}-${Math.floor(1000 + Math.random() * 9000)}`;
+    }
+
+    document.getElementById('btnOpenNewCharge').addEventListener('click', async () => {
+      chargeModal.classList.add('active');
+      await loadNextInvoiceForClient();
+      clientPhoneInput.focus();
+      if (window.lucide) lucide.createIcons();
+    });
+
+    document.getElementById('btnGenNewInvoice').addEventListener('click', async () => {
+      await loadNextInvoiceForClient();
+      showToast('Novo número de fatura gerado!', 'info');
+      if (window.lucide) lucide.createIcons();
+    });
+
+    document.getElementById('btnCloseChargeModal').addEventListener('click', () => chargeModal.classList.remove('active'));
+
+    clientPhoneInput.addEventListener('input', (e) => {
+      let val = e.target.value.replace(/\D/g, '');
+      if (val.length > 9) val = val.slice(0, 9);
+
+      let formatted = '';
+      if (val.length > 0) formatted = val.slice(0, 2);
+      if (val.length >= 3) formatted += ' ' + val.slice(2, 5);
+      if (val.length >= 6) formatted += ' ' + val.slice(5, 9);
+      e.target.value = formatted;
+
+      const prefix = val.slice(0, 2);
+      if (prefix === '84' || prefix === '85') {
+        clientOpPill.className = 'badge-operator is-mpesa';
+        clientOpText.textContent = 'M-Pesa';
+      } else if (prefix === '86' || prefix === '87') {
+        clientOpPill.className = 'badge-operator is-emola';
+        clientOpText.textContent = 'e-Mola';
+      } else {
+        clientOpPill.className = 'badge-operator';
+        clientOpText.textContent = 'Auto';
+      }
+    });
+
+    document.getElementById('clientChargeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const phone = clientPhoneInput.value.replace(/\D/g, '');
+      const amount = parseFloat(document.getElementById('clientAmount').value);
+      const reference = clientInvoiceRefInput.value.trim();
+      const desc = document.getElementById('clientOrderDesc').value.trim() || 'Cobrança WePay';
+
+      if (!phone || phone.length !== 9) {
+        showToast('Introduza um telemóvel válido de 9 dígitos.', 'error');
+        clientPhoneInput.focus();
+        return;
+      }
+
+      const btn = document.getElementById('btnSendClientCharge');
+      const btnText = btn.querySelector('.btn-text');
+      const btnSpinner = btn.querySelector('.btn-spinner');
+
+      btn.disabled = true;
+      btnText.style.display = 'none';
+      btnSpinner.style.display = 'block';
+
+      try {
+        const res = await fetch('/api/payments/c2b', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, amount, reference, description: desc })
+        });
+
+        if (res.ok) {
+          showToast('Cobrança C2B disparada com sucesso!', 'success');
+          chargeModal.classList.remove('active');
+          clientPhoneInput.value = '';
+          await loadPayments();
+        } else {
+          showToast('Falha ao processar cobrança.', 'error');
+        }
+      } catch (err) {
+        showToast('Erro de conexão ao enviar cobrança.', 'error');
+      } finally {
+        btn.disabled = false;
+        btnText.style.display = 'inline';
+        btnSpinner.style.display = 'none';
+      }
+    });
+
+    // Inicialização
+    if (window.lucide) lucide.createIcons();
+    loadProducts();
+    loadPayments();
+    setInterval(() => {
+      loadPayments();
+    }, 5000);
+  </script>
+</body>
+</html>

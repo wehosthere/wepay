@@ -650,6 +650,11 @@
           <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
         </a>
 
+        <a href="/dashboard" style="text-decoration: none; font-size: 0.825rem; font-weight: 600; color: #111827; padding: 7px 14px; border: 1.5px solid #eaecf0; border-radius: 99px; background: #ffffff; display: flex; align-items: center; gap: 6px;" title="Ver como Cliente / Vendedor">
+          <span>Área do Cliente</span>
+          <i data-lucide="layout-dashboard" style="width: 14px; height: 14px;"></i>
+        </a>
+
         <!-- Usuário Logado e Botão Sair -->
         <div style="display: flex; align-items: center; gap: 8px; border-left: 1px solid var(--border); padding-left: 12px; margin-left: 2px;">
           <span id="adminUserEmail" style="font-size: 0.775rem; color: #4b5563; font-weight: 600;">admin@wepay.co.mz</span>
@@ -921,6 +926,11 @@
           return;
         }
         const data = await res.json();
+        // Proteção de Rota: Utilizadores comuns/vendedores são redirecionados para a dashboard do cliente
+        if (data.user && data.user.role !== 'admin') {
+          window.location.replace('/dashboard');
+          return;
+        }
         if (data.user?.email) {
           document.getElementById('adminUserEmail').textContent = data.user.email;
         }

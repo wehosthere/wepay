@@ -130,8 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedToken = localStorage.getItem('wepay_auth_token') || sessionStorage.getItem('wepay_auth_token');
     const headerBtn = document.getElementById('headerLoginBtn');
     if (savedToken && headerBtn) {
-      headerBtn.href = '/admin';
-      headerBtn.innerHTML = '<i data-lucide="layout-dashboard" style="width: 14px; height: 14px;"></i> <span>Meu Painel</span>';
+      headerBtn.href = '/dashboard';
+      headerBtn.innerHTML = '<i data-lucide="layout-dashboard" style="width: 14px; height: 14px;"></i> <span>Meu Dashboard</span>';
     }
 
     // Busca o status do gateway no backend

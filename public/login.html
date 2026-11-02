@@ -374,7 +374,7 @@
       loginEmail.focus();
     });
 
-    // Se já estiver logado, redireciona direto para o /admin
+    // Se já estiver logado, redireciona para a respectiva dashboard (admin vs cliente)
     async function checkAuth() {
       const savedToken = localStorage.getItem('wepay_auth_token') || sessionStorage.getItem('wepay_auth_token');
       if (!savedToken) return;
@@ -383,7 +383,12 @@
           headers: { 'Authorization': `Bearer ${savedToken}` }
         });
         if (res.ok) {
-          window.location.replace('/admin');
+          const data = await res.json();
+          if (data.user?.role === 'admin') {
+            window.location.replace('/admin');
+          } else {
+            window.location.replace('/dashboard');
+          }
         }
       } catch (e) {}
     }
@@ -423,7 +428,11 @@
             localStorage.setItem('wepay_auth_token', data.token);
             sessionStorage.setItem('wepay_auth_token', data.token);
           }
-          window.location.href = '/admin';
+          if (data.user && data.user.role === 'admin') {
+            window.location.href = '/admin';
+          } else {
+            window.location.href = '/dashboard';
+          }
         } else {
           loginErrorText.textContent = data.error?.message || 'E-mail ou palavra-passe incorretos.';
           loginError.style.display = 'flex';
@@ -482,7 +491,11 @@
             localStorage.setItem('wepay_auth_token', data.token);
             sessionStorage.setItem('wepay_auth_token', data.token);
           }
-          window.location.href = '/admin';
+          if (data.user && data.user.role === 'admin') {
+            window.location.href = '/admin';
+          } else {
+            window.location.href = '/dashboard';
+          }
         } else {
           loginErrorText.textContent = data.error?.message || 'Erro ao criar conta.';
           loginError.style.display = 'flex';

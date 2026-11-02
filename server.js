@@ -366,7 +366,18 @@ app.post('/api/admin/mode', (req, res) => {
 });
 
 /**
- * Rota direta para o painel administrativo
+ * Rota do Dashboard do Cliente / Vendedor
+ */
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+});
+
+// Atalhos amigáveis para a rota do cliente
+app.get('/cliente', (req, res) => res.redirect('/dashboard'));
+app.get('/painel', (req, res) => res.redirect('/dashboard'));
+
+/**
+ * Rota direta para o painel administrativo geral
  */
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
@@ -806,10 +817,11 @@ app.get('*', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`\n======================================================`);
-  console.log(`🚀 WePay - Checkout & Painel Admin iniciado!`);
-  console.log(`🌐 Checkout Cliente: http://localhost:${PORT}`);
-  console.log(`🔐 Login Admin:      http://localhost:${PORT}/login`);
-  console.log(`📊 Painel Admin:     http://localhost:${PORT}/admin`);
-  console.log(`🗄️ Banco de Dados:   MongoDB Atlas (wepaydb)`);
+  console.log(`🚀 WePay - Sistema de Pagamentos & Infoprodutos Ativo!`);
+  console.log(`🌐 Checkout Cliente:   http://localhost:${PORT}`);
+  console.log(`👤 Dashboard Cliente:  http://localhost:${PORT}/dashboard`);
+  console.log(`📊 Painel Admin:       http://localhost:${PORT}/admin`);
+  console.log(`🔐 Login / Registo:    http://localhost:${PORT}/login`);
+  console.log(`🗄️ Banco de Dados:     MongoDB Atlas (wepaydb)`);
   console.log(`======================================================\n`);
 });
