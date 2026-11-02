@@ -10,9 +10,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const KIVORA_SECRET_KEY = process.env.KIVORA_SECRET_KEY || '';
 const KIVORA_BASE_URL = (process.env.KIVORA_BASE_URL || 'https://www.kivorapayments.com').replace(/\/+$/, '');
-const MONGODB_URI = process.env.MONGODB_URI || '';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://karinganastudio23:VIbemongodb@cluster0.oe0akin.mongodb.net/wepaydb?retryWrites=true&w=majority';
 
-// Inicia conexão assíncrona com MongoDB Atlas
+// Inicia conexão com MongoDB Atlas
 connectMongo(MONGODB_URI);
 
 // Credenciais de Administrador Padrão (.env)
@@ -30,6 +30,16 @@ let currentPaymentMode = process.env.PAYMENT_MODE || (KIVORA_SECRET_KEY ? 'live'
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Garantir conexão MongoDB pronta para Vercel Serverless
+app.use(async (req, res, next) => {
+  if (!isDbConnected()) {
+    try {
+      await connectMongo(MONGODB_URI);
+    } catch (e) {}
+  }
+  next();
+});
 
 // Caminhos dos bancos de dados JSON locais (Fallback)
 const DB_PAYMENTS = path.join(__dirname, 'data', 'payments.json');

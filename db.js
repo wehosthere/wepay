@@ -56,59 +56,69 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-let isConnected = false;
+const DEFAULT_MONGODB_URI = 'mongodb+srv://karinganastudio23:VIbemongodb@cluster0.oe0akin.mongodb.net/wepaydb?retryWrites=true&w=majority';
+let cachedMongoPromise = null;
 
 async function connectMongo(uri) {
-  if (!uri) {
-    console.warn('⚠️ [MongoDB] MONGODB_URI não informada no .env. Operando em modo de memória local.');
-    return false;
-  }
-
-  try {
-    mongoose.set('strictQuery', false);
-    await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 8000
-    });
-    isConnected = true;
-    console.log('✅ [MongoDB] Conectado com sucesso ao banco de dados Atlas: wepaydb');
-
-    // Seed inicial de produtos se o banco estiver vazio
-    const countProds = await Product.countDocuments();
-    if (countProds === 0) {
-      await Product.create([
-        {
-          id: "prod_ebook_01",
-          name: "E-book: Guia Prático de Finanças Pessoais",
-          price: 250,
-          currency: "MZN",
-          description: "Aprenda a poupar, gerir o seu dinheiro e investir com segurança.",
-          deliveryType: "download",
-          deliveryUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-          deliveryMessage: "Obrigado pela sua compra! O seu guia financeiro está pronto para download.",
-          salesCount: 1,
-          revenue: 250
-        },
-        {
-          id: "prod_grupo_vip",
-          name: "Acesso Grupo VIP de Networking & Vendas",
-          price: 500,
-          currency: "MZN",
-          description: "Comunidade exclusiva no WhatsApp para empreendedores e produtores digitais.",
-          deliveryType: "link",
-          deliveryUrl: "https://chat.whatsapp.com/exemplo-vip-wepay",
-          deliveryMessage: "Acesso VIP liberado! Clique no botão abaixo para ingressar no grupo oficial.",
-          salesCount: 0,
-          revenue: 0
-        }
-      ]);
-      console.log('📦 [MongoDB] Produtos de exemplo inseridos no banco de dados.');
-    }
-
+  if (mongoose.connection.readyState === 1) {
     return true;
-  } catch (err) {
-    console.error('❌ [MongoDB] Erro ao conectar ao MongoDB Atlas:', err.message);
-    return false;
   }
+
+  if (cachedMongoPromise) {
+    return cachedMongoPromise;
+  }
+
+  const targetUri = uri || process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
+
+  cachedMongoPromise = (async () => {
+    try {
+      mongoose.set('strictQuery', false);
+      await mongoose.connect(targetUri, {
+        serverSelectionTimeoutMS: 8000
+      });
+      console.log('✅ [MongoDB] Conectado com sucesso ao banco de dados Atlas: wepaydb');
+
+      // Seed inicial de produtos se o banco estiver vazio
+      const countProds = await Product.countDocuments();
+      if (countProds === 0) {
+        await Product.create([
+          {
+            id: "prod_ebook_01",
+            name: "E-book: Guia Prático de Finanças Pessoais",
+            price: 250,
+            currency: "MZN",
+            description: "Aprenda a poupar, gerir o seu dinheiro e investir com segurança.",
+            deliveryType: "download",
+            deliveryUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+            deliveryMessage: "Obrigado pela sua compra! O seu guia financeiro está pronto para download.",
+            salesCount: 1,
+            revenue: 250
+          },
+          {
+            id: "prod_grupo_vip",
+            name: "Acesso Grupo VIP de Networking & Vendas",
+            price: 500,
+            currency: "MZN",
+            description: "Comunidade exclusiva no WhatsApp para empreendedores e produtores digitais.",
+            deliveryType: "link",
+            deliveryUrl: "https://chat.whatsapp.com/exemplo-vip-wepay",
+            deliveryMessage: "Acesso VIP liberado! Clique no botão abaixo para ingressar no grupo oficial.",
+            salesCount: 0,
+            revenue: 0
+          }
+        ]);
+        console.log('📦 [MongoDB] Produtos de exemplo inseridos no banco de dados.');
+      }
+
+      return true;
+    } catch (err) {
+      console.error('❌ [MongoDB] Erro ao conectar ao MongoDB Atlas:', err.message);
+      cachedMongoPromise = null;
+      return false;
+    }
+  })();
+
+  return cachedMongoPromise;
 }
 
 module.exports = {
@@ -116,5 +126,5 @@ module.exports = {
   Product,
   User,
   connectMongo,
-  isDbConnected: () => isConnected
+  isDbConnected: () => mongoose.connection.readyState === 1
 };
