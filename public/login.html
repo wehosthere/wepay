@@ -213,18 +213,10 @@
           </button>
         </form>
 
-        <!-- Dica de Credenciais Padrão com Preenchimento Automático -->
-        <div class="login-footer-info">
-          <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px;">
-            <i data-lucide="shield-check" style="width: 14px; height: 14px; color: #16a34a;"></i>
-            <span>Conta de Demonstração / Admin:</span>
-          </div>
-          <div style="margin-bottom: 8px;">
-            <span class="code-chip">admin@wepay.co.mz</span> / <span class="code-chip">admin123</span>
-          </div>
-          <button type="button" id="btnFillDemo" style="background: none; border: 1px solid var(--border); border-radius: 99px; padding: 4px 12px; font-size: 0.725rem; font-weight: 600; color: #4b5563; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: background 0.15s;">
-            <i data-lucide="sparkles" style="width: 12px; height: 12px; color: #111827;"></i>
-            <span>Preencher credenciais</span>
+        <div class="login-footer-info" style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); text-align: center; font-size: 0.8rem; color: #6b7280;">
+          <span>Ainda não tem conta?</span>
+          <button type="button" onclick="setAuthMode('register')" style="background: none; border: none; font-size: 0.8rem; font-weight: 700; color: #111827; cursor: pointer; text-decoration: underline; margin-left: 4px;">
+            Criar conta grátis
           </button>
         </div>
       </div>
@@ -293,10 +285,11 @@
           </button>
         </form>
 
-        <div class="login-footer-info">
-          <p style="font-size: 0.775rem; color: #6b7280;">
-            Ao criar conta, tem acesso imediato à emissão de cobranças C2B e venda de infoprodutos.
-          </p>
+        <div class="login-footer-info" style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); text-align: center; font-size: 0.8rem; color: #6b7280;">
+          <span>Já tem uma conta registada?</span>
+          <button type="button" onclick="setAuthMode('login')" style="background: none; border: none; font-size: 0.8rem; font-weight: 700; color: #111827; cursor: pointer; text-decoration: underline; margin-left: 4px;">
+            Entrar aqui
+          </button>
         </div>
       </div>
 
@@ -366,13 +359,6 @@
     });
 
     if (window.lucide) lucide.createIcons();
-
-    // Preenchimento rápido com 1 clique para demonstração
-    document.getElementById('btnFillDemo').addEventListener('click', () => {
-      loginEmail.value = 'admin@wepay.co.mz';
-      loginPassword.value = 'admin123';
-      loginEmail.focus();
-    });
 
     // Se já estiver logado, redireciona para a respectiva dashboard (admin vs cliente)
     async function checkAuth() {
