@@ -886,15 +886,36 @@
 
         <div class="field-group">
           <label class="field-label">Tipo de Entrega</label>
-          <select id="prodDeliveryType" class="phone-input" style="padding-left: 14px; padding-right: 14px; font-weight: 500; cursor: pointer;">
-            <option value="download">Download Direto (PDF / Arquivo na Nuvem)</option>
+          <select id="prodDeliveryType" class="phone-input" style="padding-left: 14px; padding-right: 14px; font-weight: 600; cursor: pointer;">
+            <option value="download">Fazer Upload de PDF / E-book (Cloudinary)</option>
             <option value="link">Link de Acesso (Grupo VIP WhatsApp / Telegram / Membros)</option>
           </select>
         </div>
 
-        <div class="field-group">
-          <label class="field-label">Link de Entrega (URL do Arquivo ou Grupo)</label>
-          <input type="url" id="prodDeliveryUrl" class="phone-input" style="padding-left: 14px; padding-right: 14px;" placeholder="Ex: https://chat.whatsapp.com/... ou link do Google Drive" required>
+        <!-- Área de Upload do PDF (Cloudinary) -->
+        <div id="pdfUploadBox" class="field-group">
+          <label class="field-label">Arquivo PDF do Infoproduto</label>
+          <div id="dropzonePdf" style="border: 2px dashed var(--border); border-radius: var(--radius-md); padding: 22px; text-align: center; cursor: pointer; background: #fafbfc; transition: all 0.15s;">
+            <input type="file" id="inputFilePdf" accept=".pdf,application/pdf" style="display: none;">
+            <div id="dropzoneDefaultState">
+              <i data-lucide="upload-cloud" style="width: 28px; height: 28px; color: #2563eb; margin-bottom: 6px;"></i>
+              <div style="font-size: 0.825rem; font-weight: 700; color: #111827;">Clique para selecionar ou arraste o PDF</div>
+              <div style="font-size: 0.725rem; color: #6b7280; margin-top: 3px;">Upload direto e seguro via Cloudinary</div>
+            </div>
+            <div id="dropzoneLoadingState" style="display: none; align-items: center; justify-content: center; gap: 8px;">
+              <div class="btn-spinner" style="display: block; width: 18px; height: 18px; border-width: 2px;"></div>
+              <span style="font-size: 0.8rem; font-weight: 600; color: #2563eb;">A carregar PDF para a nuvem...</span>
+            </div>
+            <div id="dropzoneSuccessState" style="display: none; align-items: center; justify-content: center; gap: 6px; color: #16a34a;">
+              <i data-lucide="check-circle-2" style="width: 18px; height: 18px;"></i>
+              <span id="dropzoneFileName" style="font-size: 0.8rem; font-weight: 700;">arquivo.pdf carregado!</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group" id="groupDeliveryUrl">
+          <label class="field-label" id="labelDeliveryUrl">Link de Download do Arquivo</label>
+          <input type="url" id="prodDeliveryUrl" class="phone-input" style="padding-left: 14px; padding-right: 14px; font-family: monospace; font-size: 0.8rem;" placeholder="https://res.cloudinary.com/... ou link externo" required>
         </div>
 
         <div class="modal-footer">
@@ -1270,9 +1291,114 @@
       }
     }
 
-    // Modal de Produto
+    // Modal de Produto e Upload de PDF
     const productModal = document.getElementById('productModal');
-    document.getElementById('btnOpenNewProduct').addEventListener('click', () => productModal.classList.add('active'));
+    const prodDeliveryType = document.getElementById('prodDeliveryType');
+    const pdfUploadBox = document.getElementById('pdfUploadBox');
+    const labelDeliveryUrl = document.getElementById('labelDeliveryUrl');
+    const prodDeliveryUrlInput = document.getElementById('prodDeliveryUrl');
+    const dropzonePdf = document.getElementById('dropzonePdf');
+    const inputFilePdf = document.getElementById('inputFilePdf');
+    const dropzoneDefaultState = document.getElementById('dropzoneDefaultState');
+    const dropzoneLoadingState = document.getElementById('dropzoneLoadingState');
+    const dropzoneSuccessState = document.getElementById('dropzoneSuccessState');
+    const dropzoneFileName = document.getElementById('dropzoneFileName');
+
+    prodDeliveryType.addEventListener('change', () => {
+      if (prodDeliveryType.value === 'download') {
+        pdfUploadBox.style.display = 'block';
+        labelDeliveryUrl.textContent = 'Link de Download do Arquivo';
+        prodDeliveryUrlInput.placeholder = 'https://res.cloudinary.com/... ou link direto';
+      } else {
+        pdfUploadBox.style.display = 'none';
+        labelDeliveryUrl.textContent = 'Link de Acesso (Grupo WhatsApp/Telegram/Membros)';
+        prodDeliveryUrlInput.placeholder = 'https://chat.whatsapp.com/... ou link da comunidade';
+      }
+    });
+
+    dropzonePdf.addEventListener('click', () => inputFilePdf.click());
+
+    ['dragenter', 'dragover'].forEach(name => {
+      dropzonePdf.addEventListener(name, (e) => {
+        e.preventDefault();
+        dropzonePdf.style.borderColor = '#2563eb';
+        dropzonePdf.style.background = '#f0f7ff';
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(name => {
+      dropzonePdf.addEventListener(name, (e) => {
+        e.preventDefault();
+        dropzonePdf.style.borderColor = 'var(--border)';
+        dropzonePdf.style.background = '#fafbfc';
+      });
+    });
+
+    dropzonePdf.addEventListener('drop', (e) => {
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handlePdfUpload(e.dataTransfer.files[0]);
+      }
+    });
+
+    inputFilePdf.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        handlePdfUpload(e.target.files[0]);
+      }
+    });
+
+    async function handlePdfUpload(file) {
+      if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+        showToast('Por favor selecione um arquivo em formato PDF.', 'error');
+        return;
+      }
+
+      if (file.size > 20 * 1024 * 1024) {
+        showToast('O arquivo PDF não deve ultrapassar 20MB.', 'error');
+        return;
+      }
+
+      dropzoneDefaultState.style.display = 'none';
+      dropzoneSuccessState.style.display = 'none';
+      dropzoneLoadingState.style.display = 'flex';
+
+      try {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = async () => {
+          const base64Data = reader.result;
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ file: base64Data, fileName: file.name })
+          });
+
+          const data = await res.json();
+          if (res.ok && data.url) {
+            prodDeliveryUrlInput.value = data.url;
+            dropzoneLoadingState.style.display = 'none';
+            dropzoneSuccessState.style.display = 'flex';
+            dropzoneFileName.textContent = `${file.name} carregado com sucesso!`;
+            showToast('PDF carregado com sucesso para a nuvem Cloudinary!', 'success');
+            if (window.lucide) lucide.createIcons();
+          } else {
+            throw new Error(data.error?.message || 'Falha no upload');
+          }
+        };
+      } catch (err) {
+        dropzoneLoadingState.style.display = 'none';
+        dropzoneDefaultState.style.display = 'block';
+        showToast('Erro ao carregar PDF: ' + err.message, 'error');
+      }
+    }
+
+    document.getElementById('btnOpenNewProduct').addEventListener('click', () => {
+      productModal.classList.add('active');
+      dropzoneDefaultState.style.display = 'block';
+      dropzoneLoadingState.style.display = 'none';
+      dropzoneSuccessState.style.display = 'none';
+      inputFilePdf.value = '';
+      if (window.lucide) lucide.createIcons();
+    });
     document.getElementById('btnCloseProductModal').addEventListener('click', () => productModal.classList.remove('active'));
 
     document.getElementById('createProductForm').addEventListener('submit', async (e) => {

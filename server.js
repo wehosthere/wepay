@@ -26,9 +26,22 @@ const activeAuthSessions = new Map();
 // Modo de operação em memória (pode ser alternado dinamicamente pelo admin)
 let currentPaymentMode = process.env.PAYMENT_MODE || (KIVORA_SECRET_KEY ? 'live' : 'simulator');
 
+// Cloudinary para Armazenamento de PDFs e Arquivos Digitais
+const cloudinary = require('cloudinary').v2;
+const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || 'dnvnftvky';
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY || '259851568455899';
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET || '3hRsXzUVd3pnwn9IKQWN7UAeJLc';
+
+cloudinary.config({
+  cloud_name: CLOUDINARY_CLOUD_NAME,
+  api_key: CLOUDINARY_API_KEY,
+  api_secret: CLOUDINARY_API_SECRET
+});
+
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Garantir conexão MongoDB pronta para Vercel Serverless
@@ -413,6 +426,40 @@ app.get('/api/products/:id', async (req, res) => {
     return res.status(404).json({ error: { message: 'Infoproduto não encontrado.' } });
   }
   res.json(product);
+});
+
+// Upload de Arquivos / PDFs de Infoprodutos para o Cloudinary
+app.post('/api/upload', async (req, res) => {
+  try {
+    const { file, fileName } = req.body;
+    if (!file) {
+      return res.status(400).json({ error: { message: 'Nenhum arquivo enviado.' } });
+    }
+
+    const cleanName = (fileName || `arquivo_${Date.now()}`).replace(/[^a-zA-Z0-9._-]/g, '_');
+    const publicId = `wepay_${Date.now()}_${cleanName.replace(/\.[^/.]+$/, '')}`;
+
+    const uploadRes = await cloudinary.uploader.upload(file, {
+      resource_type: 'auto',
+      public_id: publicId,
+      folder: 'wepay_products'
+    });
+
+    console.log(`[Cloudinary] PDF/Arquivo carregado com sucesso: ${uploadRes.secure_url}`);
+    res.json({
+      success: true,
+      url: uploadRes.secure_url,
+      fileName: fileName || 'documento.pdf',
+      bytes: uploadRes.bytes
+    });
+  } catch (err) {
+    console.error('Erro no upload Cloudinary:', err);
+    res.status(500).json({
+      error: {
+        message: 'Falha no upload do arquivo: ' + (err.message || 'Erro no servidor')
+      }
+    });
+  }
 });
 
 // Criar novo infoproduto pelo admin
