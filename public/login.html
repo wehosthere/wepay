@@ -136,55 +136,95 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     }
 
-    /* Responsividade Mobile */
+    .btn-back-checkout {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #6b7280;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      margin-bottom: 16px;
+      padding: 6px 10px 6px 0;
+      transition: color 0.15s;
+    }
+
+    .btn-back-checkout:hover {
+      color: #111827;
+    }
+
+    /* Remover fundo azul automático do autofill do Safari / WebKit */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+      -webkit-text-fill-color: #111827 !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
+    /* Responsividade Mobile - Design Nativo de App */
     @media (max-width: 480px) {
       body {
-        padding: 16px 12px;
+        background-color: #ffffff;
+        padding: 14px 20px env(safe-area-inset-bottom);
+        align-items: flex-start;
+        justify-content: flex-start;
       }
       .login-container {
         max-width: 100%;
+        margin: 0 auto;
+        padding-top: 6px;
       }
       .login-card {
-        padding: 26px 18px;
-        border-radius: var(--radius-md);
+        border: none;
+        box-shadow: none;
+        padding: 8px 0 24px;
+        border-radius: 0;
+      }
+      .login-brand {
+        margin-bottom: 20px;
       }
       .login-title {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
+        letter-spacing: -0.03em;
       }
       .login-sub {
-        font-size: 0.775rem;
-        margin-bottom: 20px;
+        font-size: 0.85rem;
+        margin-bottom: 24px;
       }
       .auth-toggle-bar {
-        margin-bottom: 20px;
+        margin-bottom: 24px;
+        padding: 4px;
+        background: #f3f4f6;
       }
       .auth-toggle-btn {
-        padding: 8px 6px;
-        font-size: 0.75rem;
+        padding: 9px 8px;
+        font-size: 0.8rem;
       }
       .phone-input {
         font-size: 16px; /* Evita zoom no Safari iOS */
-        padding-top: 11px;
-        padding-bottom: 11px;
+        padding-top: 13px;
+        padding-bottom: 13px;
+        border-radius: var(--radius-md);
       }
       .btn-pay {
-        min-height: 48px;
+        min-height: 50px;
+        font-size: 0.95rem;
+        border-radius: var(--radius-md);
         touch-action: manipulation;
       }
     }
 
     @media (max-width: 360px) {
       body {
-        padding: 12px 8px;
-      }
-      .login-card {
-        padding: 20px 14px;
+        padding: 10px 14px;
       }
       .login-title {
-        font-size: 1.1rem;
+        font-size: 1.25rem;
       }
       .auth-toggle-btn span {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
       }
     }
   </style>
@@ -192,8 +232,8 @@
 <body>
 
   <div class="login-container">
-    <a href="/" style="display: inline-flex; align-items: center; gap: 6px; color: #6b7280; font-size: 0.825rem; font-weight: 600; text-decoration: none; margin-bottom: 16px;">
-      <i data-lucide="arrow-left" style="width: 15px; height: 15px;"></i>
+    <a href="/" class="btn-back-checkout">
+      <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
       <span>Voltar ao Checkout</span>
     </a>
 
