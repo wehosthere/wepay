@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WePay | Checkout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Topo Minimalista -->
+  <header class="clean-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon"></span>
+        <span class="brand-name">WePay</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Container Principal -->
+  <main class="clean-container">
+    <div class="checkout-card">
+      
+      <!-- Lado Esquerdo: Valor e Pedido -->
+      <aside class="order-pane">
+        <div class="order-content">
+          <span class="order-tag">Cobrança</span>
+          <h1 class="order-title" id="orderDescription">Subscrição Pro</h1>
+          <span class="order-ref" id="displayReference">ORD-1001</span>
+
+          <div class="price-display">
+            <span class="price-val" id="displayAmount">100,00</span>
+            <span class="price-cur">MZN</span>
+          </div>
+
+          <!-- Elementos preservados para compatibilidade com app.js -->
+          <span id="subtotalVal" style="display:none;"></span>
+          <span id="totalVal" style="display:none;"></span>
+        </div>
+
+        <div class="secure-footer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>Pagamento Seguro</span>
+        </div>
+      </aside>
+
+      <!-- Lado Direito: Ações / Estados -->
+      <section class="payment-pane">
+        
+        <!-- ESTADO 1: FORMULÁRIO LIMPO -->
+        <div id="stepForm" class="step-pane active">
+          
+          <!-- Seletor Rápido de Carteira com Logos Oficiais -->
+          <div class="provider-toggle">
+            <label class="provider-btn active" data-operator="mpesa">
+              <input type="radio" name="paymentMethod" value="mpesa" checked>
+              <img src="https://publiceyenews.com/wp-content/uploads/2021/07/mpesa.jpg" alt="M-Pesa" class="provider-logo-img">
+              <span class="provider-name">M-Pesa</span>
+            </label>
+
+            <label class="provider-btn" data-operator="emola">
+              <input type="radio" name="paymentMethod" value="emola">
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSookw-aKR2BGLUEfckV0RaECrjDasgp4TH5VLb0j5KIpyhVm0wyMQEwIhs&s=10" alt="e-Mola" class="provider-logo-img">
+              <span class="provider-name">e-Mola</span>
+            </label>
+          </div>
+
+          <!-- Formulário Direto ao Ponto -->
+          <form id="checkoutForm" novalidate>
+            <div class="field-group">
+              <label for="phoneNumber" class="field-label">Telemóvel</label>
+              <div class="phone-box">
+                <span class="prefix">+258</span>
+                <input 
+                  type="tel" 
+                  id="phoneNumber" 
+                  name="phoneNumber" 
+                  class="phone-input" 
+                  placeholder="84 123 4567" 
+                  maxlength="12"
+                  autocomplete="tel"
+                  required
+                >
+                <div class="badge-operator" id="operatorPill">
+                  <span id="operatorPillText">Auto</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dados opcionais recolhidos / compactos -->
+            <input type="hidden" id="customerName" value="">
+            <input type="hidden" id="customerEmail" value="">
+
+            <!-- Alerta Simples de Erro -->
+            <div id="formErrorMessage" class="clean-error" style="display: none;">
+              <span id="errorText">Introduza um número válido.</span>
+            </div>
+
+            <!-- Botão Principal -->
+            <button type="submit" id="btnSubmitPayment" class="btn-pay">
+              <span class="btn-text">Pagar <span id="btnPayAmount">100,00 MZN</span></span>
+              <div class="btn-spinner" style="display: none;"></div>
+            </button>
+          </form>
+        </div>
+
+        <!-- ESTADO 2: AGUARDANDO AUTORIZAÇÃO NO TELEMÓVEL -->
+        <div id="stepPending" class="step-pane">
+          <div class="pending-pane">
+            <div class="pulse-phone-icon">
+              <div class="pulse-wave"></div>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2">
+                <rect x="5" y="2" width="14" height="20" rx="3"></rect>
+                <line x1="12" y1="18" x2="12.01" y2="18" stroke-width="3"></line>
+              </svg>
+            </div>
+
+            <h2 class="state-title">Autorize no telemóvel</h2>
+            <p class="state-sub">
+              Digite o seu PIN para confirmar o débito em <strong id="pendingPhoneNumber">84 XXX XXXX</strong>
+            </p>
+
+            <div class="progress-wrap">
+              <div class="progress-bar">
+                <div class="progress-fill" id="countdownProgress"></div>
+              </div>
+              <div class="progress-meta">
+                <span id="pollingStatusText">Aguardando aprovação...</span>
+                <span id="countdownTimer">01:30</span>
+              </div>
+            </div>
+
+            <div class="state-actions">
+              <button type="button" id="btnCheckStatusNow" class="btn-clean-secondary">
+                Já confirmei o PIN
+              </button>
+              <button type="button" id="btnCancelPayment" class="btn-link">
+                Alterar número
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ESTADO 3: SUCESSO / RECIBO -->
+        <div id="stepSuccess" class="step-pane">
+          <div class="result-pane">
+            <div class="badge-success">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+
+            <h2 class="state-title">Pagamento Concluído</h2>
+            <span class="state-sub">Cobrança confirmada com sucesso</span>
+
+            <!-- Cartão de Entrega Automática do Infoproduto -->
+            <div id="productDeliveryCard" class="delivery-card" style="display: none;">
+              <div class="delivery-badge">🎁 Acesso Liberado</div>
+              <h3 id="deliveryTitle" class="delivery-title">O seu infoproduto está pronto!</h3>
+              <p id="deliveryMessage" class="delivery-desc">Obrigado pela sua compra. Clique abaixo para aceder agora mesmo.</p>
+              <a id="btnAccessProduct" href="#" target="_blank" class="btn-delivery">
+                <span id="deliveryBtnText">Descarregar Arquivo</span> ↗
+              </a>
+            </div>
+
+            <!-- Recibo Limpo -->
+            <div class="receipt-clean" id="receiptToPrint">
+              <div class="receipt-line">
+                <span>Referência</span>
+                <strong id="receiptRef">ORD-1001</strong>
+              </div>
+              <div class="receipt-line">
+                <span>ID Kivora</span>
+                <strong class="font-mono" id="receiptId">pay_xxxxx</strong>
+              </div>
+              <div class="receipt-line">
+                <span>Telemóvel</span>
+                <strong id="receiptPhone">+258 84 123 4567</strong>
+              </div>
+              <div class="receipt-line">
+                <span>Data</span>
+                <strong id="receiptDate">01/11/2026</strong>
+              </div>
+              <div class="receipt-line total-line">
+                <span>Total Pago</span>
+                <strong id="receiptAmount">100,00 MZN</strong>
+              </div>
+            </div>
+
+            <div class="state-actions">
+              <button type="button" id="btnPrintReceipt" class="btn-pay">
+                Imprimir Recibo
+              </button>
+              <button type="button" id="btnNewPayment" class="btn-clean-secondary">
+                Novo Pagamento
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ESTADO 4: FALHA -->
+        <div id="stepFailed" class="step-pane">
+          <div class="result-pane">
+            <div class="badge-failed">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </div>
+
+            <h2 class="state-title">Pagamento Não Realizado</h2>
+            <p class="state-sub" id="failedReasonText">
+              Transação recusada ou tempo de espera expirado.
+            </p>
+
+            <div class="state-actions">
+              <button type="button" id="btnTryAgain" class="btn-pay">
+                Tentar Novamente
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

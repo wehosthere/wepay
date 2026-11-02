@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WePay | Painel Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Estilos Tema Branco Puro para o Painel Admin */
+    :root {
+      --admin-bg: #fcfcfd;
+    }
+
+    body {
+      background-color: var(--admin-bg);
+    }
+
+    .admin-container {
+      max-width: 1120px;
+      margin: 32px auto;
+      padding: 0 24px;
+      width: 100%;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .admin-title-wrap h1 {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #111827;
+    }
+
+    .admin-subtitle {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .admin-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Abas Principais de Navegação */
+    .nav-tabs-wrapper {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1.5px solid var(--border);
+      margin-bottom: 28px;
+      padding-bottom: 2px;
+    }
+
+    .nav-tab-btn {
+      padding: 10px 18px;
+      border: none;
+      background: none;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #6b7280;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.15s;
+    }
+
+    .nav-tab-btn:hover {
+      color: #111827;
+    }
+
+    .nav-tab-btn.active {
+      color: #111827;
+    }
+
+    .nav-tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -3.5px;
+      left: 0;
+      width: 100%;
+      height: 2.5px;
+      background: #111827;
+      border-radius: 99px;
+    }
+
+    .tab-counter {
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      font-size: 0.725rem;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 99px;
+      color: #4b5563;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+      animation: tabFade 0.2s ease;
+    }
+
+    @keyframes tabFade {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Seletor de Modo (Live vs Simulador) */
+    .mode-switch-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .mode-switch-pill:hover {
+      border-color: #111827;
+    }
+
+    .mode-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .mode-dot.live {
+      background: #16a34a;
+      box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
+    }
+
+    .mode-dot.simulator {
+      background: #f59e0b;
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+    }
+
+    /* Banner Informativo */
+    .notice-banner {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-left: 4px solid #f59e0b;
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+    }
+
+    .notice-text {
+      color: #374151;
+    }
+
+    .notice-btn {
+      background: none;
+      border: none;
+      color: #111827;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 0.825rem;
+    }
+
+    /* Cards de Estatísticas */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-top: 8px;
+      color: #111827;
+    }
+
+    .stat-value.highlight {
+      color: #16a34a;
+    }
+
+    /* Tabela de Cobranças */
+    .table-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+      overflow: hidden;
+    }
+
+    .table-header-bar {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .table-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .table-filters {
+      display: flex;
+      gap: 6px;
+    }
+
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover {
+      background: #f9fafb;
+      color: #111827;
+    }
+
+    .filter-btn.active {
+      background: #111827;
+      color: #ffffff;
+      border-color: #111827;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .admin-table th {
+      padding: 14px 24px;
+      background: #fcfcfd;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6b7280;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .admin-table td {
+      padding: 16px 24px;
+      font-size: 0.875rem;
+      border-bottom: 1px solid var(--border);
+      color: #111827;
+      vertical-align: middle;
+    }
+
+    .admin-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .admin-table tr:hover td {
+      background: #fafafa;
+    }
+
+    .phone-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .mini-logo {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .status-badge.paid {
+      background: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+
+    .status-badge.pending {
+      background: #fefce8;
+      color: #ca8a04;
+      border: 1px solid #fef08a;
+    }
+
+    .status-badge.failed {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+
+    .btn-action-refresh {
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 0.775rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #111827;
+      transition: all 0.15s;
+    }
+
+    .btn-action-refresh:hover {
+      background: #f9fafb;
+      border-color: #111827;
+    }
+
+    /* Grid de Infoprodutos */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.15s;
+    }
+
+    .product-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+
+    .product-top-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.725rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 99px;
+      margin-bottom: 12px;
+    }
+
+    .product-top-badge.download {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .product-top-badge.link {
+      background: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .product-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #111827;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .product-desc {
+      font-size: 0.825rem;
+      color: #6b7280;
+      margin-bottom: 18px;
+      line-height: 1.45;
+      min-height: 38px;
+    }
+
+    .product-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 0;
+      border-top: 1px dashed var(--border);
+      border-bottom: 1px dashed var(--border);
+      margin-bottom: 18px;
+    }
+
+    .product-price {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #111827;
+    }
+
+    .product-sales {
+      font-size: 0.8rem;
+      color: #6b7280;
+      font-weight: 600;
+    }
+
+    .product-actions-bar {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-copy-link {
+      flex: 1;
+      padding: 9px 12px;
+      background: #ffffff;
+      border: 1.5px solid #111827;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.825rem;
+      font-weight: 700;
+      color: #111827;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-copy-link:hover {
+      background: #f9fafb;
+    }
+
+    .btn-product-menu {
+      padding: 9px 12px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-product-menu:hover {
+      border-color: #dc2626;
+      color: #dc2626;
+    }
+
+    /* Modais */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(17, 24, 39, 0.35);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      animation: modalFade 0.2s ease;
+    }
+
+    @keyframes modalFade {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+
+    .modal-sub {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-bottom: 24px;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    /* Notificações Toast Modernas */
+    .toast-container {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    .toast-item {
+      pointer-events: auto;
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08);
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 320px;
+      max-width: 420px;
+      animation: toastIn 0.25s ease forwards;
+      transition: all 0.2s;
+    }
+
+    .toast-item.success {
+      border-left: 4px solid #16a34a;
+      color: #111827;
+    }
+
+    .toast-item.error {
+      border-left: 4px solid #dc2626;
+      color: #991b1b;
+      background: #fffafa;
+    }
+
+    .toast-item.info {
+      border-left: 4px solid #111827;
+      color: #111827;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 860px) {
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .admin-table {
+        font-size: 0.8rem;
+      }
+      .admin-table th, .admin-table td {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Topo Minimalista -->
+  <header class="clean-header">
+    <div class="header-inner" style="justify-content: space-between;">
+      <div class="brand">
+        <span class="brand-icon"></span>
+        <span class="brand-name">WePay <span style="font-weight: 500; font-size: 0.8rem; color: #6b7280; margin-left: 6px;">Painel Admin</span></span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <!-- Seletor de Modo Interativo -->
+        <button id="btnToggleMode" class="mode-switch-pill" title="Clique para alternar entre Modo Real e Modo Simulador">
+          <span class="mode-dot" id="modeDot"></span>
+          <span id="modeText">A carregar modo...</span>
+        </button>
+
+        <a href="/" target="_blank" style="text-decoration: none; font-size: 0.825rem; font-weight: 600; color: #111827; padding: 7px 14px; border: 1.5px solid #eaecf0; border-radius: 99px; background: #ffffff;">
+          Abrir Checkout ↗
+        </a>
+
+        <!-- Usuário Logado e Botão Sair -->
+        <div style="display: flex; align-items: center; gap: 8px; border-left: 1px solid var(--border); padding-left: 12px; margin-left: 2px;">
+          <span id="adminUserEmail" style="font-size: 0.775rem; color: #4b5563; font-weight: 600;">admin@wepay.co.mz</span>
+          <button id="btnLogout" style="background: #ffffff; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 0.75rem; font-weight: 600; color: #dc2626; cursor: pointer; transition: all 0.15s;" title="Encerrar sessão de administrador">
+            Sair
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-container">
+    
+    <!-- Banner Informativo Dinâmico -->
+    <div class="notice-banner" id="modeBanner" style="display: none;">
+      <span class="notice-text" id="noticeText">
+        Modo de Demonstração ativo: As cobranças aprovam automaticamente em 6s para testes rápidos.
+      </span>
+      <button class="notice-btn" id="btnNoticeAction">Alternar para Kivora Live</button>
+    </div>
+
+    <!-- Navegação por Abas: Cobranças vs Infoprodutos -->
+    <div class="nav-tabs-wrapper">
+      <button class="nav-tab-btn active" data-tab="tabCharges">
+        <span>💳 Cobranças C2B</span>
+      </button>
+      <button class="nav-tab-btn" data-tab="tabProducts">
+        <span>📦 Infoprodutos Digitais</span>
+        <span class="tab-counter" id="countProductsBadge">0</span>
+      </button>
+    </div>
+
+    <!-- ABA 1: GESTÃO DE COBRANÇAS C2B -->
+    <div id="tabCharges" class="tab-pane active">
+      <div class="admin-header">
+        <div class="admin-title-wrap">
+          <h1>Gestão de Cobranças</h1>
+          <p class="admin-subtitle">Monitorização em tempo real das transações da sua conta WePay</p>
+        </div>
+        <div class="admin-actions">
+          <button id="btnOpenNewCharge" class="btn-clean-secondary" style="width: auto; padding: 10px 18px;">
+            + Nova Cobrança
+          </button>
+          <button id="btnRefreshList" class="btn-pay" style="width: auto; padding: 10px 18px;">
+            Atualizar
+          </button>
+        </div>
+      </div>
+
+      <!-- Estatísticas Rápidas -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">Total Arrecadado</span>
+          <div class="stat-value highlight" id="statVolume">0,00 MZN</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Pagas / Liquidadas</span>
+          <div class="stat-value" id="statPaid">0</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Aguardando PIN</span>
+          <div class="stat-value" id="statPending">0</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Falhadas / Recusadas</span>
+          <div class="stat-value" id="statFailed">0</div>
+        </div>
+      </div>
+
+      <!-- Tabela de Cobranças -->
+      <div class="table-card">
+        <div class="table-header-bar">
+          <span class="table-title">Histórico de Cobranças C2B</span>
+          <div class="table-filters">
+            <button class="filter-btn active" data-filter="all">Todas</button>
+            <button class="filter-btn" data-filter="paid">Pagas</button>
+            <button class="filter-btn" data-filter="pending">Pendentes</button>
+            <button class="filter-btn" data-filter="failed">Falhadas</button>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Referência / ID</th>
+                <th>Telemóvel</th>
+                <th>Montante</th>
+                <th>Estado</th>
+                <th>Data</th>
+                <th style="text-align: right;">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsTableBody">
+              <tr>
+                <td colspan="6" style="text-align: center; color: #9ca3af; padding: 36px;">
+                  A carregar cobranças...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 2: INFOPRODUTOS DIGITAIS -->
+    <div id="tabProducts" class="tab-pane">
+      <div class="admin-header">
+        <div class="admin-title-wrap">
+          <h1>Meus Infoprodutos</h1>
+          <p class="admin-subtitle">Venda e-books, cursos, mentorias e grupos VIP com entrega automática pós-pagamento</p>
+        </div>
+        <div class="admin-actions">
+          <button id="btnOpenNewProduct" class="btn-pay" style="width: auto; padding: 10px 18px;">
+            + Cadastrar Infoproduto
+          </button>
+        </div>
+      </div>
+
+      <!-- Grid de Infoprodutos -->
+      <div class="products-grid" id="productsGridContainer">
+        <!-- Injetado via Javascript -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL 1: Nova Cobrança Manual -->
+  <div class="modal-overlay" id="chargeModal">
+    <div class="modal-card">
+      <h2 class="modal-title">Disparar Cobrança C2B</h2>
+      <p class="modal-sub">O cliente receberá uma solicitação no telemóvel para introduzir o PIN.</p>
+
+      <form id="adminChargeForm">
+        <div class="field-group">
+          <label class="field-label">Telemóvel do Cliente (Moçambique)</label>
+          <div class="phone-box">
+            <span class="prefix">+258</span>
+            <input type="tel" id="adminPhone" class="phone-input" placeholder="84 787 7405" required maxlength="12">
+            <div class="badge-operator" id="adminOperatorPill">
+              <span id="adminOperatorText">Auto</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Montante (MZN)</label>
+          <input type="number" id="adminAmount" class="phone-input" style="padding-left: 16px; padding-right: 16px;" value="100" min="1" required>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Descrição / Referência</label>
+          <input type="text" id="adminDesc" class="phone-input" style="padding-left: 16px; padding-right: 16px;" placeholder="Ex: Fatura #102">
+        </div>
+
+        <div style="margin: 18px 0; padding: 12px; background: #fbfbfc; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="checkForceSimulate">
+            <span>Enviar como <strong>Simulação de Demonstração</strong> (Aprova em 6s)</span>
+          </label>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="btnCloseModal" class="btn-clean-secondary">Cancelar</button>
+          <button type="submit" id="btnSendAdminCharge" class="btn-pay">
+            <span class="btn-text">Enviar Cobrança</span>
+            <div class="btn-spinner" style="display: none; margin: 0 auto;"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Cadastrar Infoproduto -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-card">
+      <h2 class="modal-title">Novo Infoproduto</h2>
+      <p class="modal-sub">Defina o preço e o link para entrega automática após o pagamento.</p>
+
+      <form id="createProductForm">
+        <div class="field-group">
+          <label class="field-label">Nome do Infoproduto</label>
+          <input type="text" id="prodName" class="phone-input" style="padding-left: 14px; padding-right: 14px;" placeholder="Ex: E-book: Guia do Tráfego Pago" required>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Preço (MZN)</label>
+          <input type="number" id="prodPrice" class="phone-input" style="padding-left: 14px; padding-right: 14px;" placeholder="Ex: 350" min="1" required>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Descrição Curta</label>
+          <input type="text" id="prodDesc" class="phone-input" style="padding-left: 14px; padding-right: 14px;" placeholder="Ex: Acesso vitalício ao guia em PDF com estratégias práticas">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Tipo de Entrega</label>
+          <select id="prodDeliveryType" class="phone-input" style="padding-left: 14px; padding-right: 14px; font-weight: 500; cursor: pointer;">
+            <option value="download">📥 Download Direto (PDF / Arquivo na Nuvem)</option>
+            <option value="link">🚀 Link de Acesso (Grupo VIP WhatsApp / Telegram / Membros)</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Link de Entrega (URL do Arquivo ou Grupo)</label>
+          <input type="url" id="prodDeliveryUrl" class="phone-input" style="padding-left: 14px; padding-right: 14px;" placeholder="Ex: https://chat.whatsapp.com/... ou link do Google Drive" required>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="btnCloseProductModal" class="btn-clean-secondary">Cancelar</button>
+          <button type="submit" id="btnSaveProduct" class="btn-pay">
+            <span>Criar e Gerar Link</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // --- AUTENTICAÇÃO OBRIGATÓRIA DO ADMINISTRADOR ---
+    const authToken = sessionStorage.getItem('wepay_auth_token');
+    if (!authToken) {
+      window.location.replace('/login');
+    }
+
+    async function checkAdminAuth() {
+      try {
+        const res = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (!res.ok) {
+          sessionStorage.removeItem('wepay_auth_token');
+          window.location.replace('/login');
+          return;
+        }
+        const data = await res.json();
+        if (data.user?.email) {
+          document.getElementById('adminUserEmail').textContent = data.user.email;
+        }
+      } catch (err) {
+        window.location.replace('/login');
+      }
+    }
+    checkAdminAuth();
+
+    // Botão Sair (Logout)
+    document.getElementById('btnLogout').addEventListener('click', async () => {
+      try {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+      } catch (e) {}
+      sessionStorage.removeItem('wepay_auth_token');
+      window.location.replace('/login');
+    });
+
+    let allPayments = [];
+    let allProducts = [];
+    let currentFilter = 'all';
+    let currentSystemMode = 'simulator';
+
+    const MPESA_IMG = "https://publiceyenews.com/wp-content/uploads/2021/07/mpesa.jpg";
+    const EMOLA_IMG = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSookw-aKR2BGLUEfckV0RaECrjDasgp4TH5VLb0j5KIpyhVm0wyMQEwIhs&s=10";
+
+    // Sistema de Notificações Toast
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast-item ${type}`;
+
+      let icon = 'ℹ️';
+      if (type === 'success') icon = '✓';
+      if (type === 'error') icon = '✕';
+
+      toast.innerHTML = `
+        <span style="font-weight: 800; font-size: 1rem;">${icon}</span>
+        <span style="flex: 1;">${message}</span>
+      `;
+
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-10px)';
+        setTimeout(() => toast.remove(), 250);
+      }, 4000);
+    }
+
+    function formatMZN(val) {
+      return new Intl.NumberFormat('pt-MZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val || 0);
+    }
+
+    // Gestão de Abas
+    document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+        btn.classList.add('active');
+        const target = document.getElementById(btn.dataset.tab);
+        if (target) target.classList.add('active');
+      });
+    });
+
+    // Atualização de Modo
+    async function updateModeUI(mode) {
+      currentSystemMode = mode;
+      const dot = document.getElementById('modeDot');
+      const text = document.getElementById('modeText');
+      const banner = document.getElementById('modeBanner');
+      const noticeText = document.getElementById('noticeText');
+      const btnNoticeAction = document.getElementById('btnNoticeAction');
+
+      if (mode === 'live') {
+        dot.className = 'mode-dot live';
+        text.textContent = 'Kivora Live (Produção)';
+        banner.style.display = 'none';
+      } else {
+        dot.className = 'mode-dot simulator';
+        text.textContent = 'Modo Simulador (Demonstração)';
+        banner.style.display = 'flex';
+        noticeText.textContent = 'Modo Simulador ativo: Todas as cobranças são testadas localmente com aprovação automática em 6 segundos.';
+        btnNoticeAction.textContent = 'Mudar para Kivora Live';
+      }
+    }
+
+    async function toggleSystemMode() {
+      const newMode = currentSystemMode === 'live' ? 'simulator' : 'live';
+      try {
+        const res = await fetch('/api/admin/mode', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: newMode })
+        });
+        if (res.ok) {
+          updateModeUI(newMode);
+          showToast(`Modo alterado para ${newMode === 'live' ? 'Kivora Live' : 'Modo Simulador'}`, 'info');
+        }
+      } catch (e) {
+        showToast('Erro ao alternar modo', 'error');
+      }
+    }
+
+    document.getElementById('btnToggleMode').addEventListener('click', toggleSystemMode);
+    document.getElementById('btnNoticeAction').addEventListener('click', toggleSystemMode);
+
+    // Carregar Estatísticas
+    async function loadStats() {
+      try {
+        const res = await fetch('/api/admin/stats');
+        if (!res.ok) return;
+        const data = await res.json();
+        document.getElementById('statVolume').textContent = `${formatMZN(data.totalVolume)} MZN`;
+        document.getElementById('statPaid').textContent = data.totalPaid;
+        document.getElementById('statPending').textContent = data.totalPending;
+        document.getElementById('statFailed').textContent = data.totalFailed;
+        if (data.currentMode) updateModeUI(data.currentMode);
+      } catch (err) {
+        console.error('Erro ao buscar stats:', err);
+      }
+    }
+
+    // Carregar Cobranças
+    async function loadPayments() {
+      try {
+        const res = await fetch('/api/admin/payments');
+        if (!res.ok) return;
+        allPayments = await res.json();
+        renderTable();
+      } catch (err) {
+        console.error('Erro ao buscar pagamentos:', err);
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('paymentsTableBody');
+      const filtered = allPayments.filter(p => {
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'paid') return p.status === 'paid' || p.status === 'completed';
+        if (currentFilter === 'pending') return p.status === 'pending' || p.status === 'processing';
+        if (currentFilter === 'failed') return p.status === 'failed' || p.status === 'cancelled';
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; color: #9ca3af; padding: 36px;">
+              Nenhuma cobrança encontrada.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(p => {
+        const isMpesa = p.operator === 'mpesa' || (p.phone && (p.phone.startsWith('84') || p.phone.startsWith('85')));
+        const logo = isMpesa ? MPESA_IMG : EMOLA_IMG;
+        const opName = isMpesa ? 'M-Pesa' : 'e-Mola';
+
+        let badgeClass = 'pending';
+        let statusText = 'Pendente';
+        if (p.status === 'paid' || p.status === 'completed') {
+          badgeClass = 'paid';
+          statusText = 'Pago';
+        } else if (p.status === 'failed' || p.status === 'cancelled') {
+          badgeClass = 'failed';
+          statusText = 'Falhado';
+        }
+
+        const dateStr = p.createdAt ? new Date(p.createdAt).toLocaleString('pt-MZ', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight: 700;">${p.reference || '—'}</div>
+              <div style="font-family: monospace; font-size: 0.75rem; color: #6b7280;">${p.id}</div>
+            </td>
+            <td>
+              <div class="phone-cell">
+                <img src="${logo}" class="mini-logo" alt="${opName}">
+                <span>+258 ${p.phone || '—'}</span>
+              </div>
+            </td>
+            <td>
+              <strong>${formatMZN(p.amount)}</strong> <span style="font-size: 0.75rem; color: #6b7280;">MZN</span>
+            </td>
+            <td>
+              <span class="status-badge ${badgeClass}">${statusText}</span>
+            </td>
+            <td style="color: #6b7280; font-size: 0.8rem;">
+              ${dateStr}
+            </td>
+            <td style="text-align: right;">
+              <button class="btn-action-refresh" onclick="verifyPaymentStatus('${p.id}')">
+                Checar Kivora
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function verifyPaymentStatus(paymentId) {
+      try {
+        showToast('Consultando estado na Kivora...', 'info');
+        const res = await fetch(`/api/payments/c2b/${paymentId}`);
+        if (res.ok) {
+          const updated = await res.json();
+          await loadStats();
+          await loadPayments();
+          const st = updated.status?.toUpperCase() || 'DESCONHECIDO';
+          showToast(`Estado atual: ${st}`, st === 'PAID' ? 'success' : 'info');
+        } else {
+          showToast('Cobrança não encontrada ou resposta inválida', 'error');
+        }
+      } catch (e) {
+        showToast('Erro ao consultar status', 'error');
+      }
+    }
+
+    // --- GESTÃO DE INFOPRODUTOS ---
+    async function loadProducts() {
+      try {
+        const res = await fetch('/api/products');
+        if (!res.ok) return;
+        allProducts = await res.json();
+        document.getElementById('countProductsBadge').textContent = allProducts.length;
+        renderProducts();
+      } catch (e) {
+        console.error('Erro ao carregar infoprodutos:', e);
+      }
+    }
+
+    function renderProducts() {
+      const container = document.getElementById('productsGridContainer');
+      if (allProducts.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; background: #ffffff; border: 1.5px dashed var(--border); border-radius: var(--radius-md); padding: 48px 24px; text-align: center;">
+            <div style="font-size: 2rem; margin-bottom: 8px;">📦</div>
+            <h3 style="font-weight: 800; font-size: 1.15rem; margin-bottom: 4px;">Nenhum infoproduto cadastrado ainda</h3>
+            <p style="color: #6b7280; font-size: 0.85rem; margin-bottom: 20px;">Cadastre seu primeiro e-book ou curso para começar a vender.</p>
+            <button onclick="document.getElementById('productModal').classList.add('active')" class="btn-pay" style="width: auto; margin: 0 auto; padding: 10px 22px;">
+              + Criar Meu Primeiro Infoproduto
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      const baseUrl = window.location.origin;
+
+      container.innerHTML = allProducts.map(prod => {
+        const isDownload = prod.deliveryType === 'download';
+        const badgeClass = isDownload ? 'download' : 'link';
+        const badgeLabel = isDownload ? '📥 Download Direto' : '🚀 Grupo VIP / Link';
+        const checkoutUrl = `${baseUrl}/?product=${prod.id}`;
+
+        return `
+          <div class="product-card">
+            <div>
+              <span class="product-top-badge ${badgeClass}">${badgeLabel}</span>
+              <h3 class="product-title">${prod.name}</h3>
+              <p class="product-desc">${prod.description || 'Sem descrição informada.'}</p>
+            </div>
+
+            <div>
+              <div class="product-meta-row">
+                <div>
+                  <span style="font-size: 0.7rem; font-weight: 700; color: #9ca3af; text-transform: uppercase;">Preço</span>
+                  <div class="product-price">${formatMZN(prod.price)} <span style="font-size: 0.75rem; color: #6b7280;">MZN</span></div>
+                </div>
+                <div style="text-align: right;">
+                  <span style="font-size: 0.7rem; font-weight: 700; color: #9ca3af; text-transform: uppercase;">Vendas</span>
+                  <div class="product-sales">${prod.salesCount || 0} vendidas</div>
+                </div>
+              </div>
+
+              <div class="product-actions-bar">
+                <button class="btn-copy-link" onclick="copyProductLink('${checkoutUrl}')">
+                  📋 Copiar Link de Venda
+                </button>
+                <a href="${checkoutUrl}" target="_blank" class="btn-product-menu" title="Testar Checkout do Produto">
+                  ↗
+                </a>
+                <button class="btn-product-menu" onclick="deleteProduct('${prod.id}')" title="Excluir Produto">
+                  🗑
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function copyProductLink(url) {
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('Link de checkout copiado para a área de transferência! Cole nas suas redes ou WhatsApp.', 'success');
+      }).catch(() => {
+        prompt('Copie o seu link de venda:', url);
+      });
+    }
+
+    async function deleteProduct(productId) {
+      if (!confirm('Deseja realmente remover este infoproduto?')) return;
+      try {
+        const res = await fetch(`/api/products/${productId}`, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('Infoproduto removido com sucesso.', 'info');
+          await loadProducts();
+        }
+      } catch (e) {
+        showToast('Erro ao remover produto.', 'error');
+      }
+    }
+
+    // Modal de Produto
+    const productModal = document.getElementById('productModal');
+    document.getElementById('btnOpenNewProduct').addEventListener('click', () => productModal.classList.add('active'));
+    document.getElementById('btnCloseProductModal').addEventListener('click', () => productModal.classList.remove('active'));
+
+    document.getElementById('createProductForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('prodName').value;
+      const price = parseFloat(document.getElementById('prodPrice').value);
+      const desc = document.getElementById('prodDesc').value;
+      const deliveryType = document.getElementById('prodDeliveryType').value;
+      const deliveryUrl = document.getElementById('prodDeliveryUrl').value;
+
+      try {
+        const res = await fetch('/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            price,
+            description: desc,
+            deliveryType,
+            deliveryUrl
+          })
+        });
+
+        if (res.ok) {
+          const newProd = await res.json();
+          showToast(`Infoproduto "${newProd.name}" criado com sucesso!`, 'success');
+          productModal.classList.remove('active');
+          document.getElementById('createProductForm').reset();
+          await loadProducts();
+        } else {
+          showToast('Erro ao cadastrar infoproduto.', 'error');
+        }
+      } catch (err) {
+        showToast('Erro de conexão ao salvar produto.', 'error');
+      }
+    });
+
+    // Máscara de Telefone no Modal de Cobrança
+    const adminPhoneInput = document.getElementById('adminPhone');
+    const adminOpPill = document.getElementById('adminOperatorPill');
+    const adminOpText = document.getElementById('adminOperatorText');
+
+    adminPhoneInput.addEventListener('input', (e) => {
+      let val = e.target.value.replace(/\D/g, '');
+      if (val.length > 9) val = val.slice(0, 9);
+
+      let formatted = '';
+      if (val.length > 0) formatted = val.slice(0, 2);
+      if (val.length >= 3) formatted += ' ' + val.slice(2, 5);
+      if (val.length >= 6) formatted += ' ' + val.slice(5, 9);
+      e.target.value = formatted;
+
+      const prefix = val.slice(0, 2);
+      if (prefix === '84' || prefix === '85') {
+        adminOpPill.className = 'badge-operator is-mpesa';
+        adminOpText.textContent = 'M-Pesa';
+      } else if (prefix === '86' || prefix === '87') {
+        adminOpPill.className = 'badge-operator is-emola';
+        adminOpText.textContent = 'e-Mola';
+      } else {
+        adminOpPill.className = 'badge-operator';
+        adminOpText.textContent = 'Auto';
+      }
+    });
+
+    // Filtros de Tabela
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderTable();
+      });
+    });
+
+    // Modal de Cobrança
+    const chargeModal = document.getElementById('chargeModal');
+    document.getElementById('btnOpenNewCharge').addEventListener('click', () => {
+      chargeModal.classList.add('active');
+      adminPhoneInput.focus();
+    });
+    document.getElementById('btnCloseModal').addEventListener('click', () => chargeModal.classList.remove('active'));
+
+    document.getElementById('adminChargeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const phone = adminPhoneInput.value.replace(/\D/g, '');
+      const amount = parseFloat(document.getElementById('adminAmount').value);
+      const desc = document.getElementById('adminDesc').value.trim() || 'Fatura Manual';
+      const forceSimulator = document.getElementById('checkForceSimulate').checked;
+
+      if (!phone || phone.length !== 9) {
+        showToast('Introduza um telemóvel válido de 9 dígitos.', 'error');
+        adminPhoneInput.focus();
+        return;
+      }
+
+      const btn = document.getElementById('btnSendAdminCharge');
+      const btnText = btn.querySelector('.btn-text');
+      const btnSpinner = btn.querySelector('.btn-spinner');
+
+      btn.disabled = true;
+      btnText.style.display = 'none';
+      btnSpinner.style.display = 'block';
+
+      try {
+        const res = await fetch('/api/payments/c2b', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, amount, description: desc, forceSimulator })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          showToast('Cobrança C2B iniciada com sucesso!', 'success');
+          chargeModal.classList.remove('active');
+          adminPhoneInput.value = '';
+          await loadStats();
+          await loadPayments();
+        } else {
+          if (data.canSimulate) {
+            showToast(data.error?.message || 'Chave Kivora Live pendente de aprovação', 'error');
+            document.getElementById('checkForceSimulate').checked = true;
+          } else {
+            showToast(data.error?.message || 'Falha ao processar pagamento', 'error');
+          }
+        }
+      } catch (err) {
+        showToast('Erro de conexão com o servidor', 'error');
+      } finally {
+        btn.disabled = false;
+        btnText.style.display = 'inline';
+        btnSpinner.style.display = 'none';
+      }
+    });
+
+    document.getElementById('btnRefreshList').addEventListener('click', async () => {
+      await loadStats();
+      await loadPayments();
+      showToast('Dados atualizados', 'info');
+    });
+
+    // Inicialização
+    loadStats();
+    loadPayments();
+    loadProducts();
+    setInterval(() => {
+      loadStats();
+      loadPayments();
+    }, 5000);
+  </script>
+</body>
+</html>

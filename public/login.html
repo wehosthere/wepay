@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | WePay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Estilos da Tela de Login - Tema Branco Puro */
+    body {
+      background-color: #fbfbfc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.04);
+      text-align: left;
+    }
+
+    .login-brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .login-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #111827;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .login-sub {
+      font-size: 0.85rem;
+      color: #6b7280;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-toggle-pwd {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 0.775rem;
+      font-weight: 600;
+      color: #6b7280;
+      cursor: pointer;
+    }
+
+    .login-footer-info {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px dashed var(--border);
+      font-size: 0.775rem;
+      color: #6b7280;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .code-chip {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #111827;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="login-card">
+      
+      <!-- Marca WePay -->
+      <div class="login-brand">
+        <span class="brand-icon"></span>
+        <span class="brand-name" style="font-size: 1.25rem;">WePay</span>
+      </div>
+
+      <h1 class="login-title">Aceder ao Painel Admin</h1>
+      <p class="login-sub">Introduza as suas credenciais para gerir cobranças e infoprodutos</p>
+
+      <!-- Alerta de Erro -->
+      <div id="loginError" class="clean-error" style="display: none; margin-bottom: 20px;">
+        <span id="loginErrorText">E-mail ou palavra-passe incorretos.</span>
+      </div>
+
+      <!-- Formulário de Login -->
+      <form id="loginForm" novalidate>
+        <div class="field-group">
+          <label class="field-label" for="loginEmail">E-mail de Administrador</label>
+          <input 
+            type="email" 
+            id="loginEmail" 
+            class="phone-input" 
+            style="padding-left: 14px; padding-right: 14px;" 
+            placeholder="admin@wepay.co.mz" 
+            required 
+            autocomplete="email"
+          >
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="loginPassword">Palavra-passe</label>
+          <div class="password-wrapper">
+            <input 
+              type="password" 
+              id="loginPassword" 
+              class="phone-input" 
+              style="padding-left: 14px; padding-right: 60px;" 
+              placeholder="••••••••" 
+              required 
+              autocomplete="current-password"
+            >
+            <button type="button" id="btnTogglePassword" class="btn-toggle-pwd">Ver</button>
+          </div>
+        </div>
+
+        <button type="submit" id="btnSubmitLogin" class="btn-pay" style="margin-top: 10px;">
+          <span class="btn-text">Iniciar Sessão</span>
+          <div class="btn-spinner" style="display: none; margin: 0 auto;"></div>
+        </button>
+      </form>
+
+      <!-- Dica de Credenciais Padrão -->
+      <div class="login-footer-info">
+        <span>Credenciais padrão:</span><br>
+        <span class="code-chip">admin@wepay.co.mz</span> / <span class="code-chip">admin123</span>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassword = document.getElementById('loginPassword');
+    const btnSubmitLogin = document.getElementById('btnSubmitLogin');
+    const btnText = btnSubmitLogin.querySelector('.btn-text');
+    const btnSpinner = btnSubmitLogin.querySelector('.btn-spinner');
+    const loginError = document.getElementById('loginError');
+    const loginErrorText = document.getElementById('loginErrorText');
+    const btnTogglePassword = document.getElementById('btnTogglePassword');
+
+    // Alternar visibilidade da senha
+    btnTogglePassword.addEventListener('click', () => {
+      if (loginPassword.type === 'password') {
+        loginPassword.type = 'text';
+        btnTogglePassword.textContent = 'Ocultar';
+      } else {
+        loginPassword.type = 'password';
+        btnTogglePassword.textContent = 'Ver';
+      }
+    });
+
+    // Se já estiver logado, redireciona direto para o /admin
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          window.location.href = '/admin';
+        }
+      } catch (e) {
+        // não logado
+      }
+    }
+    checkAuth();
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.style.display = 'none';
+
+      const email = loginEmail.value.trim();
+      const password = loginPassword.value;
+
+      if (!email || !password) {
+        loginErrorText.textContent = 'Por favor, preencha o e-mail e a palavra-passe.';
+        loginError.style.display = 'block';
+        return;
+      }
+
+      btnSubmitLogin.disabled = true;
+      btnText.style.display = 'none';
+      btnSpinner.style.display = 'block';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          // Armazena token na sessionStorage e redireciona
+          if (data.token) {
+            sessionStorage.setItem('wepay_auth_token', data.token);
+          }
+          window.location.href = '/admin';
+        } else {
+          loginErrorText.textContent = data.error?.message || 'E-mail ou palavra-passe incorretos.';
+          loginError.style.display = 'block';
+          loginPassword.value = '';
+          loginPassword.focus();
+        }
+      } catch (err) {
+        loginErrorText.textContent = 'Erro ao comunicar com o servidor. Tente novamente.';
+        loginError.style.display = 'block';
+      } finally {
+        btnSubmitLogin.disabled = false;
+        btnText.style.display = 'inline';
+        btnSpinner.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
+

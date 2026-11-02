@@ -1,0 +1,15 @@
+[
+  {
+    "id": "pay_demo_1001",
+    "status": "paid",
+    "amount": 100,
+    "currency": "MZN",
+    "reference": "ORD-7488",
+    "phone": "841234567",
+    "operator": "mpesa",
+    "description": "Cobrança",
+    "createdAt": "2026-11-01T11:20:00.000Z",
+    "paidAt": "2026-11-01T11:20:15.000Z"
+  }
+]
+
