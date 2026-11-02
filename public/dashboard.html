@@ -187,6 +187,45 @@
       color: #111827;
     }
 
+    .table-filters {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      max-width: 100%;
+    }
+
+    .table-filters::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .filter-btn:hover {
+      background: #f9fafb;
+      color: #111827;
+    }
+
+    .filter-btn.active {
+      background: #111827;
+      color: #ffffff;
+      border-color: #111827;
+    }
+
     .client-table {
       width: 100%;
       border-collapse: collapse;
@@ -402,17 +441,19 @@
       background: #fef2f2;
     }
 
-    /* Modais */
+    /* Modais com suporte a rolagem em telas pequenas */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(17, 24, 39, 0.4);
+      background: rgba(17, 24, 39, 0.45);
       backdrop-filter: blur(4px);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 1000;
-      padding: 20px;
+      padding: 16px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .modal-overlay.active {
@@ -428,6 +469,10 @@
       max-width: 480px;
       width: 100%;
       box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.12);
+      max-height: calc(100vh - 32px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: auto;
     }
 
     .modal-title {
@@ -448,6 +493,81 @@
       justify-content: flex-end;
       gap: 10px;
       margin-top: 24px;
+    }
+
+    /* Elementos do Header */
+    .header-right-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-header-action {
+      text-decoration: none;
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: #111827;
+      padding: 7px 14px;
+      border: 1.5px solid #eaecf0;
+      border-radius: 99px;
+      background: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-header-action:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+
+    .btn-header-admin {
+      text-decoration: none;
+      font-size: 0.825rem;
+      font-weight: 700;
+      color: #2563eb;
+      padding: 7px 14px;
+      border: 1.5px solid #bfdbfe;
+      border-radius: 99px;
+      background: #eff6ff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-header-admin:hover {
+      background: #dbeafe;
+    }
+
+    .user-profile-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-left: 1px solid var(--border);
+      padding-left: 12px;
+      margin-left: 2px;
+    }
+
+    .btn-header-logout {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #dc2626;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-header-logout:hover {
+      background: #fef2f2;
+      border-color: #fecaca;
     }
 
     /* Notificações Toast */
@@ -498,6 +618,183 @@
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* ----------------------------------------------------
+       RESPONSIVIDADE COMPLETA (TABLET & MOBILE)
+       ---------------------------------------------------- */
+    @media (max-width: 860px) {
+      .client-container {
+        padding: 0 16px;
+        margin: 20px auto 40px;
+      }
+      .client-header {
+        margin-bottom: 20px;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .clean-header {
+        padding: 12px 16px;
+      }
+      .header-inner {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .brand {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+      .header-right-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        gap: 8px;
+      }
+      .user-profile-badge {
+        border-left: none;
+        padding-left: 0;
+        margin-left: auto;
+      }
+      .user-info-text {
+        display: none; /* Oculta email longo para não quebrar a barra no telemóvel */
+      }
+      .nav-tabs-wrapper {
+        margin-bottom: 20px;
+      }
+      .nav-tab-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+      }
+      .client-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+      }
+      .client-title-wrap h1 {
+        font-size: 1.3rem;
+      }
+      .client-subtitle {
+        font-size: 0.775rem;
+      }
+      .client-actions {
+        width: 100%;
+        display: flex;
+        gap: 8px;
+      }
+      .client-actions button, .client-actions a {
+        flex: 1;
+        width: 100% !important;
+        justify-content: center;
+      }
+      .products-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .product-card {
+        padding: 16px;
+      }
+      .product-title {
+        font-size: 1rem;
+      }
+      .product-desc {
+        min-height: auto;
+        margin-bottom: 12px;
+      }
+      .product-actions-bar {
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .btn-copy-link {
+        width: 100%;
+        flex: none;
+        padding: 10px;
+        font-size: 0.8rem;
+      }
+      .btn-product-menu {
+        flex: 1;
+        padding: 10px;
+      }
+      .client-table {
+        min-width: 580px;
+      }
+      .client-table th, .client-table td {
+        padding: 12px 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .client-container {
+        padding: 0 12px;
+        margin: 14px auto 32px;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .stat-card {
+        padding: 16px;
+      }
+      .stat-value {
+        font-size: 1.45rem;
+      }
+      .table-header-bar {
+        padding: 12px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .table-filters {
+        width: 100%;
+      }
+      .modal-overlay {
+        padding: 8px;
+        align-items: flex-end;
+      }
+      .modal-card {
+        padding: 24px 18px 20px;
+        border-radius: var(--radius-md) var(--radius-md) 0 0;
+        max-height: 90vh;
+        width: 100%;
+      }
+      .modal-title {
+        font-size: 1.15rem;
+      }
+      .modal-sub {
+        font-size: 0.775rem;
+        margin-bottom: 18px;
+      }
+      .modal-footer {
+        flex-direction: column-reverse;
+        gap: 8px;
+      }
+      .modal-footer button {
+        width: 100%;
+        min-height: 44px;
+      }
+      .phone-input {
+        font-size: 16px; /* Evita zoom automático no iOS */
+      }
+      .toast-container {
+        left: 12px;
+        right: 12px;
+        bottom: 16px;
+      }
+      .toast-item {
+        min-width: 0;
+        max-width: 100%;
+        width: 100%;
+        font-size: 0.775rem;
+        padding: 10px 14px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -507,30 +804,30 @@
 
   <!-- Topo da Área do Cliente -->
   <header class="clean-header">
-    <div class="header-inner" style="justify-content: space-between;">
+    <div class="header-inner">
       <div class="brand">
         <span class="brand-icon"></span>
-        <span class="brand-name">WePay <span style="font-weight: 500; font-size: 0.8rem; color: #6b7280; margin-left: 6px;">Área do Cliente</span></span>
+        <span class="brand-name">WePay <span class="brand-subtext" style="font-weight: 500; font-size: 0.8rem; color: #6b7280; margin-left: 6px;">Área do Cliente</span></span>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <a href="/" target="_blank" style="text-decoration: none; font-size: 0.825rem; font-weight: 600; color: #111827; padding: 7px 14px; border: 1.5px solid #eaecf0; border-radius: 99px; background: #ffffff; display: flex; align-items: center; gap: 6px;">
+      <div class="header-right-actions">
+        <a href="/" target="_blank" class="btn-header-action">
           <span>Checkout</span>
           <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
         </a>
 
         <!-- Link para painel Admin caso logado como administrador mestre -->
-        <a href="/admin" id="linkToMasterAdmin" style="display: none; text-decoration: none; font-size: 0.825rem; font-weight: 700; color: #2563eb; padding: 7px 14px; border: 1.5px solid #bfdbfe; border-radius: 99px; background: #eff6ff;">
+        <a href="/admin" id="linkToMasterAdmin" class="btn-header-admin" style="display: none;">
           <span>Painel Admin ↗</span>
         </a>
 
         <!-- Identificação do Utilizador e Logout -->
-        <div style="display: flex; align-items: center; gap: 8px; border-left: 1px solid var(--border); padding-left: 12px; margin-left: 2px;">
-          <div style="text-align: right;">
+        <div class="user-profile-badge">
+          <div class="user-info-text" style="text-align: right;">
             <div id="clientUserName" style="font-size: 0.8rem; color: #111827; font-weight: 700;">A Carregar...</div>
             <div id="clientUserEmail" style="font-size: 0.725rem; color: #6b7280; font-weight: 500;">...</div>
           </div>
-          <button id="btnLogout" style="background: #ffffff; border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; font-size: 0.75rem; font-weight: 600; color: #dc2626; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 4px;" title="Encerrar sessão">
+          <button id="btnLogout" class="btn-header-logout" title="Encerrar sessão">
             <i data-lucide="log-out" style="width: 13px; height: 13px;"></i>
             <span>Sair</span>
           </button>

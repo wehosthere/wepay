@@ -683,24 +683,83 @@ body {
 }
 
 /* ----------------------------------------------------
-   RESPONSIVO (MOBILE)
+   RESPONSIVO (MOBILE & TABLET)
    ---------------------------------------------------- */
-@media (max-width: 680px) {
+@media (max-width: 768px) {
+  .clean-container {
+    margin: 24px auto;
+    padding: 0 16px;
+  }
   .checkout-card {
     grid-template-columns: 1fr;
   }
   .order-pane {
     border-right: none;
     border-bottom: 1px solid var(--border);
-    padding: 24px;
+    padding: 24px 20px;
   }
   .payment-pane {
-    padding: 24px;
+    padding: 28px 20px;
   }
   .price-display {
-    margin-top: 16px;
+    margin-top: 14px;
   }
   .secure-footer {
     display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .clean-header {
+    padding: 12px 16px;
+  }
+  .clean-container {
+    margin: 12px auto 24px;
+    padding: 0 12px;
+  }
+  .checkout-card {
+    border-radius: var(--radius-md);
+  }
+  .order-pane {
+    padding: 18px 16px;
+  }
+  .order-title {
+    font-size: 1.15rem;
+  }
+  .price-val {
+    font-size: 1.85rem;
+  }
+  .payment-pane {
+    padding: 20px 14px;
+  }
+  .provider-toggle {
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .provider-btn {
+    padding: 10px 8px;
+    gap: 8px;
+  }
+  .provider-name {
+    font-size: 0.8rem;
+  }
+  .provider-logo-img {
+    width: 26px;
+    height: 26px;
+  }
+  .phone-input, .reference-input {
+    font-size: 16px; /* Evita auto-zoom do iOS Safari */
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  .btn-pay {
+    min-height: 48px;
+    font-size: 0.9rem;
+  }
+  .waiting-title {
+    font-size: 1.15rem;
+  }
+  .receipt-clean {
+    padding: 12px;
   }
 }

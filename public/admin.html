@@ -505,20 +505,22 @@
       color: #dc2626;
     }
 
-    /* Modais */
+    /* Modais com suporte a rolagem em telas pequenas */
     .modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(17, 24, 39, 0.35);
+      background: rgba(17, 24, 39, 0.45);
       backdrop-filter: blur(4px);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 100;
-      padding: 20px;
+      padding: 16px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .modal-overlay.active {
@@ -540,6 +542,10 @@
       box-shadow: 0 20px 45px rgba(0,0,0,0.1);
       border: 1px solid var(--border);
       position: relative;
+      max-height: calc(100vh - 32px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: auto;
     }
 
     .modal-title {
@@ -612,15 +618,249 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Elementos do Header */
+    .header-right-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-header-action {
+      text-decoration: none;
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: #111827;
+      padding: 7px 14px;
+      border: 1.5px solid #eaecf0;
+      border-radius: 99px;
+      background: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-header-action:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+
+    .user-profile-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-left: 1px solid var(--border);
+      padding-left: 12px;
+      margin-left: 2px;
+    }
+
+    .btn-header-logout {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #dc2626;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-header-logout:hover {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    /* ----------------------------------------------------
+       RESPONSIVIDADE COMPLETA (TABLET & MOBILE)
+       ---------------------------------------------------- */
     @media (max-width: 860px) {
+      .admin-container {
+        padding: 0 16px;
+        margin: 20px auto 40px;
+      }
       .stats-grid {
         grid-template-columns: 1fr 1fr;
+        gap: 12px;
       }
       .admin-table {
         font-size: 0.8rem;
       }
       .admin-table th, .admin-table td {
         padding: 12px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .clean-header {
+        padding: 12px 16px;
+      }
+      .header-inner {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .brand {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+      .header-right-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .user-profile-badge {
+        border-left: none;
+        padding-left: 0;
+        margin-left: auto;
+      }
+      .user-info-text {
+        display: none; /* Oculta email longo no telemóvel */
+      }
+      .mode-switch-pill {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+      }
+      .nav-tabs-wrapper {
+        margin-bottom: 20px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+      .nav-tab-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+      }
+      .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+      }
+      .admin-title-wrap h1 {
+        font-size: 1.3rem;
+      }
+      .admin-subtitle {
+        font-size: 0.775rem;
+      }
+      .admin-actions {
+        width: 100%;
+        display: flex;
+        gap: 8px;
+      }
+      .admin-actions button, .admin-actions a {
+        flex: 1;
+        width: 100% !important;
+        justify-content: center;
+      }
+      .products-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .product-card {
+        padding: 16px;
+      }
+      .product-title {
+        font-size: 1rem;
+      }
+      .product-desc {
+        min-height: auto;
+        margin-bottom: 12px;
+      }
+      .product-actions-bar {
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .btn-copy-link {
+        width: 100%;
+        flex: none;
+        padding: 10px;
+        font-size: 0.8rem;
+      }
+      .btn-product-menu {
+        flex: 1;
+        padding: 10px;
+      }
+      .admin-table {
+        min-width: 580px;
+      }
+      .table-filters {
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .admin-container {
+        padding: 0 12px;
+        margin: 14px auto 32px;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .stat-card {
+        padding: 16px;
+      }
+      .stat-value {
+        font-size: 1.45rem;
+      }
+      .table-header-bar {
+        padding: 12px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .modal-overlay {
+        padding: 8px;
+        align-items: flex-end;
+      }
+      .modal-card {
+        padding: 24px 18px 20px;
+        border-radius: var(--radius-md) var(--radius-md) 0 0;
+        max-height: 90vh;
+        width: 100%;
+      }
+      .modal-title {
+        font-size: 1.15rem;
+      }
+      .modal-sub {
+        font-size: 0.775rem;
+        margin-bottom: 18px;
+      }
+      .modal-footer {
+        flex-direction: column-reverse;
+        gap: 8px;
+      }
+      .modal-footer button {
+        width: 100%;
+        min-height: 44px;
+      }
+      .phone-input {
+        font-size: 16px; /* Evita zoom automático no iOS */
+      }
+      .toast-container {
+        left: 12px;
+        right: 12px;
+        bottom: 16px;
+      }
+      .toast-item {
+        min-width: 0;
+        max-width: 100%;
+        width: 100%;
+        font-size: 0.775rem;
+        padding: 10px 14px;
       }
     }
   </style>
@@ -632,33 +872,33 @@
 
   <!-- Topo Minimalista -->
   <header class="clean-header">
-    <div class="header-inner" style="justify-content: space-between;">
+    <div class="header-inner">
       <div class="brand">
         <span class="brand-icon"></span>
         <span class="brand-name">WePay <span style="font-weight: 500; font-size: 0.8rem; color: #6b7280; margin-left: 6px;">Painel Admin</span></span>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="header-right-actions">
         <!-- Seletor de Modo Interativo -->
         <button id="btnToggleMode" class="mode-switch-pill" title="Clique para alternar entre Modo Real e Modo Simulador">
           <span class="mode-dot" id="modeDot"></span>
           <span id="modeText">A carregar modo...</span>
         </button>
 
-        <a href="/" target="_blank" style="text-decoration: none; font-size: 0.825rem; font-weight: 600; color: #111827; padding: 7px 14px; border: 1.5px solid #eaecf0; border-radius: 99px; background: #ffffff; display: flex; align-items: center; gap: 6px;">
+        <a href="/" target="_blank" class="btn-header-action">
           <span>Checkout</span>
           <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
         </a>
 
-        <a href="/dashboard" style="text-decoration: none; font-size: 0.825rem; font-weight: 600; color: #111827; padding: 7px 14px; border: 1.5px solid #eaecf0; border-radius: 99px; background: #ffffff; display: flex; align-items: center; gap: 6px;" title="Ver como Cliente / Vendedor">
+        <a href="/dashboard" class="btn-header-action" title="Ver como Cliente / Vendedor">
           <span>Área do Cliente</span>
           <i data-lucide="layout-dashboard" style="width: 14px; height: 14px;"></i>
         </a>
 
         <!-- Usuário Logado e Botão Sair -->
-        <div style="display: flex; align-items: center; gap: 8px; border-left: 1px solid var(--border); padding-left: 12px; margin-left: 2px;">
-          <span id="adminUserEmail" style="font-size: 0.775rem; color: #4b5563; font-weight: 600;">admin@wepay.co.mz</span>
-          <button id="btnLogout" style="background: #ffffff; border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; font-size: 0.75rem; font-weight: 600; color: #dc2626; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 4px;" title="Encerrar sessão de administrador">
+        <div class="user-profile-badge">
+          <span id="adminUserEmail" class="user-info-text" style="font-size: 0.775rem; color: #4b5563; font-weight: 600;">admin@wepay.co.mz</span>
+          <button id="btnLogout" class="btn-header-logout" title="Encerrar sessão de administrador">
             <i data-lucide="log-out" style="width: 13px; height: 13px;"></i>
             <span>Sair</span>
           </button>

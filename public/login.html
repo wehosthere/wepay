@@ -131,6 +131,42 @@
       color: #111827;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     }
+
+    /* Responsividade Mobile */
+    @media (max-width: 480px) {
+      body {
+        padding: 16px 12px;
+      }
+      .login-container {
+        max-width: 100%;
+      }
+      .login-card {
+        padding: 26px 18px;
+        border-radius: var(--radius-md);
+      }
+      .login-title {
+        font-size: 1.2rem;
+      }
+      .login-sub {
+        font-size: 0.775rem;
+        margin-bottom: 20px;
+      }
+      .auth-toggle-bar {
+        margin-bottom: 20px;
+      }
+      .auth-toggle-btn {
+        padding: 8px 6px;
+        font-size: 0.75rem;
+      }
+      .phone-input {
+        font-size: 16px; /* Evita zoom no Safari iOS */
+        padding-top: 11px;
+        padding-bottom: 11px;
+      }
+      .btn-pay {
+        min-height: 48px;
+      }
+    }
   </style>
 </head>
 <body>
