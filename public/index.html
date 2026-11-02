@@ -8,6 +8,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script src="/vendor/lucide.min.js"></script>
+  <script>
+    if (!window.lucide) {
+      document.write('<script src="https://unpkg.com/lucide@latest"><\/script>');
+    }
+  </script>
 </head>
 <body>
 
@@ -162,11 +168,15 @@
 
             <!-- Cartão de Entrega Automática do Infoproduto -->
             <div id="productDeliveryCard" class="delivery-card" style="display: none;">
-              <div class="delivery-badge">🎁 Acesso Liberado</div>
+              <div class="delivery-badge" style="display: inline-flex; align-items: center; gap: 4px;">
+                <i data-lucide="sparkles" style="width: 13px; height: 13px;"></i>
+                <span>Acesso Liberado</span>
+              </div>
               <h3 id="deliveryTitle" class="delivery-title">O seu infoproduto está pronto!</h3>
               <p id="deliveryMessage" class="delivery-desc">Obrigado pela sua compra. Clique abaixo para aceder agora mesmo.</p>
-              <a id="btnAccessProduct" href="#" target="_blank" class="btn-delivery">
-                <span id="deliveryBtnText">Descarregar Arquivo</span> ↗
+              <a id="btnAccessProduct" href="#" target="_blank" class="btn-delivery" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                <span id="deliveryBtnText">Descarregar Arquivo</span>
+                <i data-lucide="external-link" style="width: 15px; height: 15px;"></i>
               </a>
             </div>
 
@@ -195,11 +205,13 @@
             </div>
 
             <div class="state-actions">
-              <button type="button" id="btnPrintReceipt" class="btn-pay">
-                Imprimir Recibo
+              <button type="button" id="btnPrintReceipt" class="btn-pay" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                <i data-lucide="printer" style="width: 15px; height: 15px;"></i>
+                <span>Imprimir Recibo</span>
               </button>
-              <button type="button" id="btnNewPayment" class="btn-clean-secondary">
-                Novo Pagamento
+              <button type="button" id="btnNewPayment" class="btn-clean-secondary" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                <i data-lucide="rotate-ccw" style="width: 15px; height: 15px;"></i>
+                <span>Novo Pagamento</span>
               </button>
             </div>
           </div>
@@ -221,8 +233,9 @@
             </p>
 
             <div class="state-actions">
-              <button type="button" id="btnTryAgain" class="btn-pay">
-                Tentar Novamente
+              <button type="button" id="btnTryAgain" class="btn-pay" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                <i data-lucide="refresh-cw" style="width: 15px; height: 15px;"></i>
+                <span>Tentar Novamente</span>
               </button>
             </div>
           </div>

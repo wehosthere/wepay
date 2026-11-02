@@ -124,6 +124,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (stepName === 'pending') stepPending.classList.add('active');
     if (stepName === 'success') stepSuccess.classList.add('active');
     if (stepName === 'failed') stepFailed.classList.add('active');
+
+    if (window.lucide) {
+      setTimeout(() => lucide.createIcons(), 50);
+    }
   }
 
   // Validação e detecção de operador móvel em Moçambique
@@ -422,5 +426,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Inicia aplicação
   initCheckoutView();
+  if (window.lucide) lucide.createIcons();
 });
 

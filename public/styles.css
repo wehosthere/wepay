@@ -36,6 +36,15 @@
   box-sizing: border-box;
 }
 
+.lucide {
+  width: 1.15em;
+  height: 1.15em;
+  stroke-width: 2px;
+  vertical-align: -0.18em;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
 body {
   font-family: var(--font);
   background-color: var(--bg-page);
