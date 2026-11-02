@@ -105,6 +105,14 @@ document.addEventListener('DOMContentLoaded', () => {
     displayReference.textContent = checkoutConfig.reference;
     orderDescription.textContent = checkoutConfig.description;
 
+    // Adapta o botão do menu se o utilizador já tiver sessão iniciada
+    const savedToken = localStorage.getItem('wepay_auth_token') || sessionStorage.getItem('wepay_auth_token');
+    const headerBtn = document.getElementById('headerLoginBtn');
+    if (savedToken && headerBtn) {
+      headerBtn.href = '/admin';
+      headerBtn.innerHTML = '<i data-lucide="layout-dashboard" style="width: 14px; height: 14px;"></i> <span>Meu Painel</span>';
+    }
+
     // Busca o status do gateway no backend
     fetchGatewayConfig();
   }

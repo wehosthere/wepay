@@ -888,7 +888,7 @@
 
   <script>
     // --- AUTENTICAÇÃO OBRIGATÓRIA DO ADMINISTRADOR ---
-    const authToken = sessionStorage.getItem('wepay_auth_token');
+    const authToken = localStorage.getItem('wepay_auth_token') || sessionStorage.getItem('wepay_auth_token');
     if (!authToken) {
       window.location.replace('/login');
     }
@@ -899,6 +899,7 @@
           headers: { 'Authorization': `Bearer ${authToken}` }
         });
         if (!res.ok) {
+          localStorage.removeItem('wepay_auth_token');
           sessionStorage.removeItem('wepay_auth_token');
           window.location.replace('/login');
           return;
@@ -921,6 +922,7 @@
           headers: { 'Authorization': `Bearer ${authToken}` }
         });
       } catch (e) {}
+      localStorage.removeItem('wepay_auth_token');
       sessionStorage.removeItem('wepay_auth_token');
       window.location.replace('/login');
     });

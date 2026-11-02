@@ -103,6 +103,11 @@
 <body>
 
   <div class="login-container">
+    <a href="/" style="display: inline-flex; align-items: center; gap: 6px; color: #6b7280; font-size: 0.825rem; font-weight: 600; text-decoration: none; margin-bottom: 16px;">
+      <i data-lucide="arrow-left" style="width: 15px; height: 15px;"></i>
+      <span>Voltar ao Checkout</span>
+    </a>
+
     <div class="login-card">
       
       <!-- Marca WePay -->
@@ -162,13 +167,19 @@
         </button>
       </form>
 
-      <!-- Dica de Credenciais Padrão -->
+      <!-- Dica de Credenciais Padrão com Preenchimento Automático -->
       <div class="login-footer-info">
-        <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 4px;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px;">
           <i data-lucide="shield-check" style="width: 14px; height: 14px; color: #16a34a;"></i>
-          <span>Credenciais padrão:</span>
+          <span>Credenciais do Administrador:</span>
         </div>
-        <span class="code-chip">admin@wepay.co.mz</span> / <span class="code-chip">admin123</span>
+        <div style="margin-bottom: 8px;">
+          <span class="code-chip">admin@wepay.co.mz</span> / <span class="code-chip">admin123</span>
+        </div>
+        <button type="button" id="btnFillDemo" style="background: none; border: 1px solid var(--border); border-radius: 99px; padding: 4px 12px; font-size: 0.725rem; font-weight: 600; color: #4b5563; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: background 0.15s;">
+          <i data-lucide="sparkles" style="width: 12px; height: 12px; color: #111827;"></i>
+          <span>Preencher credenciais</span>
+        </button>
       </div>
 
     </div>
@@ -195,12 +206,23 @@
 
     if (window.lucide) lucide.createIcons();
 
+    // Preenchimento rápido com 1 clique
+    document.getElementById('btnFillDemo').addEventListener('click', () => {
+      loginEmail.value = 'admin@wepay.co.mz';
+      loginPassword.value = 'admin123';
+      loginEmail.focus();
+    });
+
     // Se já estiver logado, redireciona direto para o /admin
     async function checkAuth() {
+      const savedToken = localStorage.getItem('wepay_auth_token') || sessionStorage.getItem('wepay_auth_token');
+      if (!savedToken) return;
       try {
-        const res = await fetch('/api/auth/me');
+        const res = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${savedToken}` }
+        });
         if (res.ok) {
-          window.location.href = '/admin';
+          window.location.replace('/admin');
         }
       } catch (e) {
         // não logado
@@ -217,7 +239,7 @@
 
       if (!email || !password) {
         loginErrorText.textContent = 'Por favor, preencha o e-mail e a palavra-passe.';
-        loginError.style.display = 'block';
+        loginError.style.display = 'flex';
         return;
       }
 
@@ -235,23 +257,24 @@
         const data = await res.json();
 
         if (res.ok && data.success) {
-          // Armazena token na sessionStorage e redireciona
+          // Armazena token persistente e redireciona
           if (data.token) {
+            localStorage.setItem('wepay_auth_token', data.token);
             sessionStorage.setItem('wepay_auth_token', data.token);
           }
           window.location.href = '/admin';
         } else {
           loginErrorText.textContent = data.error?.message || 'E-mail ou palavra-passe incorretos.';
-          loginError.style.display = 'block';
+          loginError.style.display = 'flex';
           loginPassword.value = '';
           loginPassword.focus();
         }
       } catch (err) {
         loginErrorText.textContent = 'Erro ao comunicar com o servidor. Tente novamente.';
-        loginError.style.display = 'block';
+        loginError.style.display = 'flex';
       } finally {
         btnSubmitLogin.disabled = false;
-        btnText.style.display = 'inline';
+        btnText.style.display = 'inline-flex';
         btnSpinner.style.display = 'none';
       }
     });
